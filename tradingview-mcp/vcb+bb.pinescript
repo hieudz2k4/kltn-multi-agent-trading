@@ -1,0 +1,213 @@
+//@version=6
+strategy("VCP + BB Squeeze Backtest", overlay=true,
+         max_bars_back=500, max_lines_count=500, max_labels_count=500,
+         initial_capital=10000,
+         calc_on_every_tick=false,
+         default_qty_type=strategy.percent_of_equity,
+         default_qty_value=10,
+         commission_type=strategy.commission.percent,
+         commission_value=0.1,
+         slippage=2)
+
+// ═══════════════════════════════════════
+// INPUTS
+// ═══════════════════════════════════════
+pivot_len = input.int(5,    "Pivot Lookback",       minval=2,   maxval=20)
+bb_len    = input.int(20,   "BB Length",            minval=5,   maxval=100)
+bb_mult   = input.float(2.0,"BB Multiplier",        minval=0.5, maxval=5.0)
+sq_thresh = input.float(1.4,"Squeeze % threshold",  minval=0.2, maxval=10.0)
+
+// EXIT SETTINGS
+grp_exit  = "Exit Settings"
+exit_mode = input.string("Hybrid (TP 50% + Trail 50%)", "Exit Strategy", options=["Fixed R:R", "BB Trailing", "Hybrid (TP 50% + Trail 50%)"], group=grp_exit)
+rr_ratio  = input.float(2.0, "Risk/Reward Ratio", minval=0.5, step=0.5, group=grp_exit)
+trail_src = input.string("BB Mid", "Trailing Source", options=["BB Mid", "BB Lower"], group=grp_exit)
+
+// ═══════════════════════════════════════
+// BOLLINGER BANDS
+// ═══════════════════════════════════════
+bb_basis   = ta.sma(close, bb_len)
+bb_dev     = ta.stdev(close, bb_len)
+bb_upper   = bb_basis + bb_mult * bb_dev
+bb_lower   = bb_basis - bb_mult * bb_dev
+bb_width   = (bb_upper - bb_lower) / bb_basis * 100
+is_squeeze = bb_width < sq_thresh
+
+plot(bb_upper, "BB Upper", color=color.new(color.gray, 30), linewidth=2)
+plot(bb_lower, "BB Lower", color=color.new(color.gray, 30), linewidth=2)
+plot(bb_basis, "BB Mid",   color=color.new(color.orange, 0), linewidth=2)
+// bgcolor(is_squeeze ? color.new(color.teal, 88) : na, title="Squeeze Zone")
+
+// ═══════════════════════════════════════
+// PIVOT DETECTION
+// ═══════════════════════════════════════
+ph = ta.pivothigh(high, pivot_len, pivot_len)
+pl = ta.pivotlow(low,   pivot_len, pivot_len)
+
+var float[] ph_price = array.new_float(0)
+var int[]   ph_bar   = array.new_int(0)
+var float[] pl_price = array.new_float(0)
+var int[]   pl_bar   = array.new_int(0)
+
+if not na(ph)
+    array.push(ph_price, ph)
+    array.push(ph_bar, bar_index[pivot_len])
+    if array.size(ph_price) > 5
+        array.shift(ph_price)
+        array.shift(ph_bar)
+
+if not na(pl)
+    array.push(pl_price, pl)
+    array.push(pl_bar, bar_index[pivot_len])
+    if array.size(pl_price) > 5
+        array.shift(pl_price)
+        array.shift(pl_bar)
+
+// ═══════════════════════════════════════
+// PHÂN TÍCH MÔ HÌNH
+// ═══════════════════════════════════════
+n_ph = array.size(ph_price)
+n_pl = array.size(pl_price)
+
+var float r_b1 = na
+var float r_p1 = na
+var float r_b2 = na
+var float r_p2 = na
+var float s_b1 = na
+var float s_p1 = na
+var float s_b2 = na
+var float s_p2 = na
+var bool has_tri = false
+var bool is_conv = false
+
+if (not na(ph) or not na(pl)) and n_ph >= 2 and n_pl >= 2
+    r_b1 := array.get(ph_bar,   n_ph - 2)
+    r_p1 := array.get(ph_price, n_ph - 2)
+    r_b2 := array.get(ph_bar,   n_ph - 1)
+    r_p2 := array.get(ph_price, n_ph - 1)
+
+    s_b1 := array.get(pl_bar,   n_pl - 2)
+    s_p1 := array.get(pl_price, n_pl - 2)
+    s_b2 := array.get(pl_bar,   n_pl - 1)
+    s_p2 := array.get(pl_price, n_pl - 1)
+
+    res_sl = (r_p2 - r_p1) / math.max(r_b2 - r_b1, 1)
+    sup_sl = (s_p2 - s_p1) / math.max(s_b2 - s_b1, 1)
+    is_conv := res_sl < sup_sl
+    has_tri := true
+
+    // Vẽ tam giác trong quá khứ bằng màu xanh da trời, nét đậm (solid)
+    line.new(int(r_b1), r_p1, int(r_b2), r_p2,
+             extend=extend.none, color=color.new(color.blue, 20), width=2, style=line.style_solid)
+    line.new(int(s_b1), s_p1, int(s_b2), s_p2,
+             extend=extend.none, color=color.new(color.blue, 20), width=2, style=line.style_solid)
+
+// ═══════════════════════════════════════
+// TÍNH GIÁ TRỊ ĐƯỜNG TẠI BAR HIỆN TẠI
+// ═══════════════════════════════════════
+var float res_at_bar = na
+var float sup_at_bar = na
+
+if has_tri and not na(r_b1)
+    res_sl_cur = (r_p2 - r_p1) / math.max(r_b2 - r_b1, 1)
+    sup_sl_cur = (s_p2 - s_p1) / math.max(s_b2 - s_b1, 1)
+    res_at_bar := r_p1 + res_sl_cur * (bar_index - r_b1)
+    sup_at_bar := s_p1 + sup_sl_cur * (bar_index - s_b1)
+
+// ═══════════════════════════════════════
+// TÍN HIỆU VÀO/THOÁT LỆNH
+// ═══════════════════════════════════════
+cross_res = ta.crossover(close, res_at_bar)
+cross_sup = ta.crossunder(close, sup_at_bar)
+
+entry_signal = has_tri and is_conv and is_squeeze and cross_res
+// Bỏ điều kiện is_squeeze cho lệnh Short vì Panic Sell thường xảy ra bất ngờ (biến động tăng)
+entry_short_signal = has_tri and is_conv and cross_sup
+
+// Global calculations to prevent local scope warnings
+lowest_5 = ta.lowest(low, 5)
+highest_5 = ta.highest(high, 5)
+trail_line = trail_src == "BB Mid" ? bb_basis : bb_lower
+cross_trail = ta.crossunder(close, trail_line)
+
+var float trade_sl = na
+var float trade_tp = na
+
+if entry_signal and strategy.position_size == 0
+    // Tính toán Stoploss và Take Profit cho Long
+    trade_sl := math.min(sup_at_bar, lowest_5)
+    risk = close - trade_sl
+    
+    if risk <= 0
+        risk := close * 0.01
+        trade_sl := close - risk
+
+    trade_tp := close + risk * rr_ratio
+    strategy.entry("VCP Long", strategy.long)
+
+if entry_short_signal and strategy.position_size == 0
+    // Tính toán Stoploss và Take Profit cho Short
+    // Lấy SL là cạnh trên của tam giác hoặc swing high gần nhất
+    trade_sl := math.max(res_at_bar, highest_5)
+    risk = trade_sl - close
+    
+    if risk <= 0
+        risk := close * 0.01
+        trade_sl := close + risk
+
+    trade_tp := close - risk * rr_ratio
+    strategy.entry("VCP Short", strategy.short)
+
+// ═══════════════════════════════════════
+// XỬ LÝ CHỐT LỜI / CẮT LỖ
+// ═══════════════════════════════════════
+// Tạm thời comment toàn bộ phần exit để dễ quan sát entry trên chart
+// if strategy.position_size > 0
+//     if exit_mode == "Fixed R:R"
+//         strategy.exit("Exit R:R", "VCP Long", stop=trade_sl, limit=trade_tp)
+//         
+//     else if exit_mode == "BB Trailing"
+//         // Thoát khi giá cắt xuống đường BB hoặc chạm Stoploss
+//         if cross_trail or close < trade_sl
+//             strategy.close("VCP Long", comment="Trail SL")
+//             
+//     else if exit_mode == "Hybrid (TP 50% + Trail 50%)"
+//         // Đóng 50% tại điểm Take Profit, phần còn lại quản lý bằng trailing stop
+//         strategy.exit("TP Half", "VCP Long", qty_percent=50, limit=trade_tp, stop=trade_sl)
+//         
+//         if cross_trail or close < trade_sl
+//             strategy.close("VCP Long", comment="Trail Exit")
+
+// ═══════════════════════════════════════
+// VẼ NHÃN VÀ ĐƯỜNG HIỆN TẠI
+// ═══════════════════════════════════════
+// Bỏ điều kiện strategy.position_size == 0 để luôn luôn hiển thị các nhãn báo Entry
+if entry_signal
+    label.new(bar_index, low * 0.999, "▲ Entry",
+              color=color.new(color.teal, 0), textcolor=color.white,
+              style=label.style_label_up, size=size.small)
+
+if entry_short_signal
+    label.new(bar_index, high * 1.001, "▼ Short",
+              color=color.new(color.red, 0), textcolor=color.white,
+              style=label.style_label_down, size=size.small)
+
+var line cur_res = na
+var line cur_sup = na
+
+if has_tri and barstate.islast
+    if not na(cur_res)
+        line.delete(cur_res)
+    if not na(cur_sup)
+        line.delete(cur_sup)
+
+    vcp_on = is_conv and is_squeeze
+    // Cập nhật đường hiện tại thành xanh da trời đậm
+    cur_res := line.new(int(r_b1), r_p1, int(r_b2), r_p2,
+                        extend=extend.right,
+                        color=vcp_on ? color.new(color.blue,  0) : color.new(color.blue,  40),
+                        width=vcp_on ? 3 : 2)
+    cur_sup := line.new(int(s_b1), s_p1, int(s_b2), s_p2,
+                        extend=extend.right,
+                        color=vcp_on ? color.new(color.blue,  0) : color.new(color.blue,  40),
+                        width=vcp_on ? 3 : 2)

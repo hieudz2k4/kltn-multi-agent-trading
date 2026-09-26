@@ -1,0 +1,182 @@
+// This Pine Script source code is subject to the terms of the Mozilla Public License 2.0
+// © auto-trendline | Personal use only
+
+//@version=6
+indicator("Auto Trendline MTF", overlay=true, max_lines_count=20, max_labels_count=20)
+
+// ═══════════════════════════════════════════════════════
+// INPUTS
+// ═══════════════════════════════════════════════════════
+
+grp_pivot = "Pivot Settings"
+pivot_left  = input.int(3, "Pivot Lookback Left",  minval=1, maxval=50, group=grp_pivot,
+     tooltip="Số nến bên TRÁI để xác nhận pivot. Tăng = pivot lớn hơn, ít hơn.")
+pivot_right = input.int(3, "Pivot Lookback Right", minval=1, maxval=50, group=grp_pivot,
+     tooltip="Số nến bên PHẢI để xác nhận pivot. Tăng = pivot chậm hơn nhưng chắc hơn.")
+use_wick    = input.bool(true, "Dùng Râu Nến (High/Low)", group=grp_pivot,
+     tooltip="True = kẻ qua đỉnh/đáy của râu nến (High/Low). False = kẻ qua giá đóng cửa (Close).")
+
+grp_display = "Display"
+show_bull        = input.bool(true,  "Trendline Tăng (Bullish)",  group=grp_display)
+show_bear        = input.bool(true,  "Trendline Giảm (Bearish)",  group=grp_display)
+show_pivot_marks = input.bool(true,  "Hiển thị dấu Pivot",        group=grp_display)
+extend_left      = input.bool(false, "Kéo dài sang Trái",         group=grp_display)
+extend_right     = input.bool(true,  "Kéo dài sang Phải",         group=grp_display)
+
+grp_style = "Style"
+bull_color  = input.color(color.new(#2196F3, 0), "Màu Trendline Tăng", group=grp_style)
+bear_color  = input.color(color.new(#F44336, 0), "Màu Trendline Giảm", group=grp_style)
+line_width  = input.int(2, "Độ dày đường", minval=1, maxval=5, group=grp_style)
+line_style_input = input.string("Solid", "Kiểu đường",
+     options=["Solid", "Dashed", "Dotted"], group=grp_style)
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+
+f_line_style() =>
+    switch line_style_input
+        "Dashed" => line.style_dashed
+        "Dotted" => line.style_dotted
+        =>          line.style_solid
+
+f_extend() =>
+    if extend_left and extend_right
+        extend.both
+    else if extend_left
+        extend.left
+    else if extend_right
+        extend.right
+    else
+        extend.none
+
+// ═══════════════════════════════════════════════════════
+// PIVOT DETECTION (TradingView native - chính xác 100%)
+// ═══════════════════════════════════════════════════════
+
+// Nguồn giá: wick hoặc close
+src_high = use_wick ? high : close
+src_low  = use_wick ? low  : close
+
+// Phát hiện pivot — trả về giá tại điểm pivot, na nếu không phải pivot
+ph = ta.pivothigh(src_high, pivot_left, pivot_right)
+pl = ta.pivotlow (src_low,  pivot_left, pivot_right)
+
+// Khi pivot được confirm: bar thực tế = bar_index - pivot_right
+// (pivot cần pivot_right nến phía sau mới confirm được)
+
+// ═══════════════════════════════════════════════════════
+// LƯU TRỮ 2 PIVOT GẦN NHẤT
+// ═══════════════════════════════════════════════════════
+
+// Pivot HIGH (cho trendline giảm)
+var float ph1_price = na  // Gần nhất
+var int   ph1_bar   = na
+var float ph2_price = na  // Cũ hơn
+var int   ph2_bar   = na
+
+// Pivot LOW (cho trendline tăng)
+var float pl1_price = na  // Gần nhất
+var int   pl1_bar   = na
+var float pl2_price = na  // Cũ hơn
+var int   pl2_bar   = na
+
+// Cập nhật khi có pivot mới
+if not na(ph)
+    ph2_price := ph1_price
+    ph2_bar   := ph1_bar
+    ph1_price := ph
+    ph1_bar   := bar_index - pivot_right
+
+if not na(pl)
+    pl2_price := pl1_price
+    pl2_bar   := pl1_bar
+    pl1_price := pl
+    pl1_bar   := bar_index - pivot_right
+
+// ═══════════════════════════════════════════════════════
+// VẼ TRENDLINE (chỉ tính toán ở nến cuối cùng)
+// ═══════════════════════════════════════════════════════
+
+var line bull_line = na
+var line bear_line = na
+var label bull_lbl = na
+var label bear_lbl = na
+
+if barstate.islast
+    ext = f_extend()
+    sty = f_line_style()
+
+    // --- TRENDLINE TĂNG ---
+    // Nối 2 pivot LOW gần nhất, kéo dài sang phải
+    if show_bull and not na(pl1_bar) and not na(pl2_bar)
+        line.delete(bull_line)
+        label.delete(bull_lbl)
+
+        bull_line := line.new(
+             x1    = pl2_bar,
+             y1    = pl2_price,
+             x2    = pl1_bar,
+             y2    = pl1_price,
+             color = bull_color,
+             width = line_width,
+             style = sty,
+             extend= ext
+         )
+
+        // Label tại pivot gần nhất
+        bull_lbl := label.new(
+             x     = pl1_bar,
+             y     = pl1_price,
+             text  = "HL",
+             color = color.new(bull_color, 80),
+             textcolor = bull_color,
+             style = label.style_label_up,
+             size  = size.small
+         )
+
+    // --- TRENDLINE GIẢM ---
+    // Nối 2 pivot HIGH gần nhất, kéo dài sang phải
+    if show_bear and not na(ph1_bar) and not na(ph2_bar)
+        line.delete(bear_line)
+        label.delete(bear_lbl)
+
+        bear_line := line.new(
+             x1    = ph2_bar,
+             y1    = ph2_price,
+             x2    = ph1_bar,
+             y2    = ph1_price,
+             color = bear_color,
+             width = line_width,
+             style = sty,
+             extend= ext
+         )
+
+        // Label tại pivot gần nhất
+        bear_lbl := label.new(
+             x     = ph1_bar,
+             y     = ph1_price,
+             text  = "LH",
+             color = color.new(bear_color, 80),
+             textcolor = bear_color,
+             style = label.style_label_down,
+             size  = size.small
+         )
+
+// ═══════════════════════════════════════════════════════
+// ĐÁNH DẤU PIVOT TRÊN CHART
+// ═══════════════════════════════════════════════════════
+
+plotshape(show_pivot_marks and not na(ph),
+     title    = "Pivot High",
+     style    = shape.triangledown,
+     location = location.abovebar,
+     color    = color.new(bear_color, 40),
+     size     = size.tiny)
+
+plotshape(show_pivot_marks and not na(pl),
+     title    = "Pivot Low",
+     style    = shape.triangleup,
+     location = location.belowbar,
+     color    = color.new(bull_color, 40),
+     size     = size.tiny)

@@ -1,0 +1,24 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+src/mcp_mt5/.env
+.env
+
+# Documentation build output
+site/
+
+# Test coverage
+htmlcov/
+.coverage
+coverage.xml
+.pytest_cache/
+
+# Ruff cache
+.ruff_cache/
