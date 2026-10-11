@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "2e1c3a54-c4de-4ee6-ab9a-3999c556cee6",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/hieudz/Desktop/workspace/kltn-multi-agent-trading/C4-Documentation/diagrams/c4-context.candidate.json",
+  "output": "/Users/hieudz/Desktop/workspace/kltn-multi-agent-trading/C4-Documentation/diagrams/c4-context.html",
+  "specification": {
+    "sha256": "c71333989d02b7af284c76606ca276a7fe862c42c08c07d0f63c3c5ac85d6c55",
+    "bytes": 3410
+  },
+  "artifact": {
+    "sha256": "61cc13ef91dcd3e02080b058d7a9cba8963e6dad944c60293a644a4a257e2ce9",
+    "bytes": 753082
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "C4 Level 1: System Context — Multi-Agent Trading System",
+    "output": "C4-Documentation/diagrams/c4-context.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "trader",
+      "type": "external",
+      "label": "Trader / Researcher",
+      "sublabel": "KLTN Evaluator & Operator",
+      "icon": "person",
+      "pos": [60, 220],
+      "size": [160, 64]
+    },
+    {
+      "id": "agent_system",
+      "type": "backend",
+      "label": "Multi-Agent Trading Core",
+      "sublabel": "Dual Strategy: CSR + SMC",
+      "tag": "Python 3.11 / uv",
+      "icon": "backend",
+      "pos": [320, 210],
+      "size": [220, 84]
+    },
+    {
+      "id": "tradingview",
+      "type": "external",
+      "label": "TradingView Desktop",
+      "sublabel": "Pine Script GUI / CDP :9222",
+      "icon": "frontend",
+      "pos": [640, 110],
+      "size": [190, 64]
+    },
+    {
+      "id": "mt5",
+      "type": "external",
+      "label": "MetaTrader 5 Terminal",
+      "sublabel": "RPyC :8001 / Broker Execution",
+      "icon": "external",
+      "pos": [640, 310],
+      "size": [190, 64]
+    },
+    {
+      "id": "lightning_cloud",
+      "type": "cloud",
+      "label": "Lightning AI Studio",
+      "sublabel": "Ubuntu Linux / Xvfb / Symlink VPS",
+      "icon": "cloud",
+      "pos": [320, 390],
+      "size": [220, 64]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Multi-Agent Trading Platform Boundary",
+      "wraps": ["agent_system"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "trader-to-system",
+      "from": "trader",
+      "to": "agent_system",
+      "label": "Monitors & Controls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "system-to-tv",
+      "from": "agent_system",
+      "to": "tradingview",
+      "label": "CDP WebSocket (Inspects OHLCV/Pine)",
+      "variant": "default",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "system-to-mt5",
+      "from": "agent_system",
+      "to": "mt5",
+      "label": "RPyC / FastMCP (Orders, Positions, Swap)",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "system-to-cloud",
+      "from": "agent_system",
+      "to": "lightning_cloud",
+      "label": "Hosts Runtime & Persists Storage",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Actors & Scope",
+      "items": [
+        "Trader quan sát hiệu suất PnL, điều chỉnh tham số rủi ro hoặc can thiệp khẩn cấp",
+        "Hệ thống đa tác tử tự động hóa toàn diện từ thu thập dữ liệu đến thực thi lệnh"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "External Systems",
+      "items": [
+        "TradingView Desktop: Nguồn đồ thị, chỉ báo kỹ thuật và nhãn Pine Script qua CDP 9222",
+        "MetaTrader 5: Cổng kết nối sàn môi giới, đọc giá Bid/Ask, kiểm tra Swap và gửi lệnh thực thi"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Cloud Infrastructure",
+      "items": [
+        "Vận hành 24/7 trên Lightning AI Studio",
+        "Tự động phục hồi trạng thái phiên giao dịch nhờ ổ lưu trữ bền vững data-lightning-vps/"
+      ]
+    }
+  ]
+}

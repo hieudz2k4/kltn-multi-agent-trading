@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "C4 Level 3: Component Architecture — Multi-Agent Trading Core",
+    "output": "C4-Documentation/diagrams/c4-component.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "csr_data",
+      "type": "backend",
+      "label": "Asset Data Collector",
+      "sublabel": "Fetches 30-50 Assets OHLCV",
+      "icon": "database",
+      "pos": [60, 100],
+      "size": [210, 60]
+    },
+    {
+      "id": "csr_ranker",
+      "type": "backend",
+      "label": "Factor Scoring Engine",
+      "sublabel": "ROC + RSI + ATR + EMA",
+      "icon": "backend",
+      "pos": [60, 200],
+      "size": [210, 60]
+    },
+    {
+      "id": "csr_portfolio",
+      "type": "backend",
+      "label": "Portfolio Allocator",
+      "sublabel": "Top 10L / 10S, Dollar-Neutral",
+      "icon": "backend",
+      "pos": [60, 300],
+      "size": [210, 60]
+    },
+    {
+      "id": "smc_bias",
+      "type": "backend",
+      "label": "HTF Bias Analyzer",
+      "sublabel": "Trend Alignment (H4, D1)",
+      "icon": "backend",
+      "pos": [310, 100],
+      "size": [210, 60]
+    },
+    {
+      "id": "smc_structure",
+      "type": "backend",
+      "label": "Market Structure Agent",
+      "sublabel": "BOS & CHoCH on M15/H1",
+      "icon": "backend",
+      "pos": [310, 200],
+      "size": [210, 60]
+    },
+    {
+      "id": "smc_poi",
+      "type": "backend",
+      "label": "POI & Liquidity Detector",
+      "sublabel": "Order Blocks, FVG, Sweeps",
+      "icon": "backend",
+      "pos": [310, 300],
+      "size": [210, 60]
+    },
+    {
+      "id": "smc_sizer",
+      "type": "backend",
+      "label": "SMC Position Sizer",
+      "sublabel": "1R = 1.0% Equity, R:R >= 2.0",
+      "icon": "backend",
+      "pos": [310, 400],
+      "size": [210, 60]
+    },
+    {
+      "id": "risk_gatekeeper",
+      "type": "security",
+      "label": "Risk Gatekeeper Agent",
+      "sublabel": "Adversarial VETO Power",
+      "tag": "VETO Authority",
+      "icon": "security",
+      "pos": [570, 200],
+      "size": [230, 74]
+    },
+    {
+      "id": "circuit_breaker",
+      "type": "security",
+      "label": "Circuit Breaker Engine",
+      "sublabel": "-3% Daily DD & Cooldown",
+      "icon": "security",
+      "pos": [570, 310],
+      "size": [230, 60]
+    },
+    {
+      "id": "order_router",
+      "type": "backend",
+      "label": "Execution Dispatcher",
+      "sublabel": "Dispatches Valid Orders to MT5",
+      "icon": "backend",
+      "pos": [570, 410],
+      "size": [230, 60]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Strategy Branch 1: Cross-Sectional Ranking Portfolio",
+      "wraps": ["csr_data", "csr_ranker", "csr_portfolio"]
+    },
+    {
+      "kind": "region",
+      "label": "Strategy Branch 2: Multi-Asset Opportunistic SMC",
+      "wraps": ["smc_bias", "smc_structure", "smc_poi", "smc_sizer"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Shared Adversarial Risk & Governance Layer",
+      "wraps": ["risk_gatekeeper", "circuit_breaker", "order_router"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "csr-flow-1",
+      "from": "csr_data",
+      "to": "csr_ranker"
+    },
+    {
+      "id": "csr-flow-2",
+      "from": "csr_ranker",
+      "to": "csr_portfolio"
+    },
+    {
+      "id": "csr-to-risk",
+      "from": "csr_portfolio",
+      "to": "risk_gatekeeper",
+      "label": "Rebalance Plan (20 Assets)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "smc-flow-1",
+      "from": "smc_bias",
+      "to": "smc_structure"
+    },
+    {
+      "id": "smc-flow-2",
+      "from": "smc_structure",
+      "to": "smc_poi"
+    },
+    {
+      "id": "smc-flow-3",
+      "from": "smc_poi",
+      "to": "smc_sizer"
+    },
+    {
+      "id": "smc-to-risk",
+      "from": "smc_sizer",
+      "to": "risk_gatekeeper",
+      "label": "Setup Intent (Entry/SL/TP)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cb-to-risk",
+      "from": "circuit_breaker",
+      "to": "risk_gatekeeper",
+      "label": "Emergency Veto Signal",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "risk-to-router",
+      "from": "risk_gatekeeper",
+      "to": "order_router",
+      "label": "Approved Intents Only",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Nhánh 1: CSR Allocation",
+      "items": [
+        "Tính toán điểm tổng hợp ROC, RSI, ATR và sắp xếp rổ 30-50 tài sản",
+        "Top 10 Long + Top 10 Short, cố định 5% vốn mỗi vị thế, tái cân bằng định kỳ"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Nhánh 2: Opportunistic SMC",
+      "items": [
+        "Xác định xu hướng khung lớn HTF Bias kết hợp phá vỡ cấu trúc BOS/CHoCH",
+        "Định vị POI (Order Block, FVG), tính Lot size theo 1R rủi ro và R:R >= 1:2.0"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Adversarial Risk Gatekeeper",
+      "items": [
+        "Độc lập hoàn toàn với signal generator, nắm quyền VETO tối cao",
+        "Kiểm duyệt Swap, Spread, Net Exposure và kích hoạt Circuit Breaker -3%"
+      ]
+    }
+  ]
+}

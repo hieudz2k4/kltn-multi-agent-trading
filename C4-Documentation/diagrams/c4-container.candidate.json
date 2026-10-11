@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "C4 Level 2: Container Architecture — Lightning AI Studio",
+    "output": "C4-Documentation/diagrams/c4-container.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "agent_runtime",
+      "type": "backend",
+      "label": "Multi-Agent Trading Core",
+      "sublabel": "Python 3.11 / uv / Asyncio",
+      "tag": "Orchestrator",
+      "icon": "backend",
+      "pos": [360, 220],
+      "size": [220, 74]
+    },
+    {
+      "id": "tv_cdp_service",
+      "type": "frontend",
+      "label": "TradingView CDP Bridge",
+      "sublabel": "Node.js CDP Client :9222",
+      "tag": "WS Client",
+      "icon": "frontend",
+      "pos": [80, 110],
+      "size": [200, 64]
+    },
+    {
+      "id": "mt5_bridge",
+      "type": "backend",
+      "label": "MT5 FastMCP / RPyC Bridge",
+      "sublabel": "Python Socket Server :8001",
+      "tag": "RPC Bridge",
+      "icon": "backend",
+      "pos": [80, 330],
+      "size": [200, 64]
+    },
+    {
+      "id": "xvfb_display",
+      "type": "security",
+      "label": "Virtual Display Xvfb",
+      "sublabel": "Display :0 / Web VNC :4000",
+      "tag": "Headless GUI",
+      "icon": "cloud",
+      "pos": [80, 220],
+      "size": [200, 64]
+    },
+    {
+      "id": "persistent_db",
+      "type": "database",
+      "label": "Persistence Storage",
+      "sublabel": "SQLite / Parquet / Symlink VPS",
+      "tag": "data-lightning-vps",
+      "icon": "database",
+      "pos": [360, 390],
+      "size": [220, 64]
+    },
+    {
+      "id": "tv_cloud",
+      "type": "external",
+      "label": "TradingView Data Feeds",
+      "sublabel": "Live Tick / Pine Script Engine",
+      "icon": "external",
+      "pos": [670, 110],
+      "size": [190, 64]
+    },
+    {
+      "id": "mt5_broker",
+      "type": "external",
+      "label": "Broker MT5 Server",
+      "sublabel": "Real Account / Order Routing",
+      "icon": "external",
+      "pos": [670, 330],
+      "size": [190, 64]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Lightning AI Studio Environment (Ubuntu Linux Container)",
+      "wraps": ["agent_runtime", "tv_cdp_service", "mt5_bridge", "xvfb_display", "persistent_db"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "core-to-tvbridge",
+      "from": "agent_runtime",
+      "to": "tv_cdp_service",
+      "label": "Inspects DOM & Canvas",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "tvbridge-to-xvfb",
+      "from": "tv_cdp_service",
+      "to": "xvfb_display",
+      "label": "Attaches to Chromium UI",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "tvbridge-to-cloud",
+      "from": "tv_cdp_service",
+      "to": "tv_cloud",
+      "label": "Streams Indicator Outputs",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "core-to-mt5bridge",
+      "from": "agent_runtime",
+      "to": "mt5_bridge",
+      "label": "Pydantic Orders & Quotes",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "mt5bridge-to-broker",
+      "from": "mt5_bridge",
+      "to": "mt5_broker",
+      "label": "FIX / Proprietary Broker Protocol",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "core-to-db",
+      "from": "agent_runtime",
+      "to": "persistent_db",
+      "label": "Logs Trades, Vetoes & State",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Core Container",
+      "items": [
+        "Multi-Agent Core chạy trên Python 3.11 được quản lý bằng uv",
+        "Tự động điều phối cả 2 nhánh chiến lược CSR Portfolio và Opportunistic SMC"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Bridges & Display",
+      "items": [
+        "TradingView CDP Bridge cào dữ liệu đồ thị không cần API trả phí của TradingView",
+        "MT5 FastMCP/RPyC Bridge cách ly môi trường thực thi và bảo đảm tính an toàn khi phát lệnh"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Data Persistence",
+      "items": [
+        "Thư mục persistent data-lightning-vps/ bảo toàn lịch sử lệnh và trạng thái danh mục",
+        "Hỗ trợ Studio tự động resume sau khi sleep mà không mất dữ liệu backtest"
+      ]
+    }
+  ]
+}

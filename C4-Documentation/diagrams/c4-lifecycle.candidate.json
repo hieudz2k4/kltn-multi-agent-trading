@@ -1,0 +1,65 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "C4 Level 4: Order Lifecycle & Adversarial VETO State Machine",
+    "output": "C4-Documentation/diagrams/c4-lifecycle.html",
+    "animation": "trace",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "main", "label": "Execution Pipeline" },
+    { "id": "governance", "label": "Risk Gatekeeper & VETO" },
+    { "id": "management", "label": "Position Tracking (BE)" },
+    { "id": "terminal", "label": "Terminal Exits" }
+  ],
+  "states": [
+    { "id": "detected", "type": "start", "label": "Signal Generated", "sublabel": "CSR Top20 / SMC Setup", "lane": "main", "col": 0, "step": "01", "tag": "pending" },
+    { "id": "evaluating", "type": "decision", "label": "Risk Evaluation", "sublabel": "Swap, Spread, Exposure, R:R", "lane": "governance", "col": 1, "step": "02", "tag": "gate" },
+    { "id": "vetoed", "type": "failure", "label": "Trade VETOED", "sublabel": "Dropped (Violation)", "lane": "terminal", "col": 1, "tag": "veto" },
+    { "id": "dispatching", "type": "active", "label": "Order Dispatching", "sublabel": "RPyC order_send()", "lane": "main", "col": 2, "step": "03", "tag": "executing" },
+    { "id": "filled", "type": "waiting", "label": "Position Active", "sublabel": "SL & TP Attached", "lane": "management", "col": 3, "step": "04", "tag": "monitoring" },
+    { "id": "breakeven", "type": "active", "label": "Trailed to BE", "sublabel": "SL moved at +1.0R", "lane": "management", "col": 4, "step": "05", "tag": "protected" },
+    { "id": "circuit_break", "type": "failure", "label": "Circuit Breaker", "sublabel": "Halt (-3% Daily DD)", "lane": "terminal", "col": 2, "tag": "halt" },
+    { "id": "exit_sl", "type": "failure", "label": "Stopped Out", "sublabel": "Max Loss (1R / -8%)", "lane": "terminal", "col": 3, "tag": "loss" },
+    { "id": "exit_tp", "type": "success", "label": "Target Hit", "sublabel": "Take Profit Secured", "lane": "terminal", "col": 4, "tag": "profit" }
+  ],
+  "transitions": [
+    { "from": "detected", "to": "evaluating" },
+    { "from": "evaluating", "to": "vetoed", "variant": "security", "label": "risk violation" },
+    { "from": "evaluating", "to": "dispatching", "variant": "emphasis", "label": "approved" },
+    { "from": "dispatching", "to": "filled", "variant": "emphasis" },
+    { "from": "filled", "to": "breakeven", "label": "gain >= +1.0R" },
+    { "from": "filled", "to": "circuit_break", "variant": "security", "label": "daily DD >= 3%" },
+    { "from": "filled", "to": "exit_sl", "variant": "security" },
+    { "from": "breakeven", "to": "exit_tp", "variant": "emphasis", "label": "TP reached" },
+    { "from": "breakeven", "to": "exit_sl", "label": "hit BE price (0 loss)" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Adversarial Gate",
+      "items": [
+        "Mọi tín hiệu từ cả 2 nhánh bắt buộc phải qua Risk Gatekeeper",
+        "Nếu phí Swap âm nặng, Spread giãn, Net Exposure > 5% hoặc R:R < 2.0 ➔ Kích hoạt quyền VETO ngay lập tức"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Trade Management",
+      "items": [
+        "Lệnh SMC khi đạt +1.0R tự động dời SL về điểm hòa vốn (Breakeven)",
+        "Đóng 50% khối lượng khi chạm vùng cản và thả trôi 50% theo xu hướng"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Fail-Safe Protection",
+      "items": [
+        "Circuit Breaker giám sát toàn tài khoản thời gian thực",
+        "Tự động thanh lý toàn bộ vị thế và dừng bot 24h nếu sụt giảm ngày chạm mức -3.0%"
+      ]
+    }
+  ]
+}

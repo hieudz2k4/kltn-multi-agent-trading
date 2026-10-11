@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ca87220b-5058-429c-8a75-eb1e4d98b894",
+  "status": "current",
+  "command": "deliver",
+  "type": "lifecycle",
+  "input": "/Users/hieudz/Desktop/workspace/kltn-multi-agent-trading/C4-Documentation/diagrams/c4-lifecycle.candidate.json",
+  "output": "/Users/hieudz/Desktop/workspace/kltn-multi-agent-trading/C4-Documentation/diagrams/c4-lifecycle.html",
+  "specification": {
+    "sha256": "e2da0b41f7353fac4a216ed90eac8bf3962123552ba774e3a30b8f88d2dfae92",
+    "bytes": 3691
+  },
+  "artifact": {
+    "sha256": "a4630e0acf27740d1e21460133ac3661733c868d9c60ce096e57e1e2cbeed8e3",
+    "bytes": 765203
+  }
+}
