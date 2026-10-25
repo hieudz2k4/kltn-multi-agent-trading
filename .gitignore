@@ -60,3 +60,19 @@ logs/
 .vscode/
 *.swp
 *.swo
+
+# Linter & Type Checkers
+.ruff_cache/
+.mypy_cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Third-party references
+QuantaAlpha/
+
+# Trading Data & Backtest Artifacts
+reports/
+*.feather
+*.sqlite3
+*.db

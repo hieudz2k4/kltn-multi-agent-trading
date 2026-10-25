@@ -1,0 +1,191 @@
+{
+  "address": "0x1a94785cc11b1b4225374a8e0015f788b222a538",
+  "display_name": null,
+  "size_cohort": "WHALE",
+  "perps_equity": 698291.3638541203,
+  "net_pnl": 447146.022466,
+  "funding_pnl": 0.0,
+  "total_trades": 139,
+  "trades_30d": 96,
+  "winrate_30d": 69.79166666666666,
+  "winrate_all": 69.06474820143885,
+  "sharpe_all": 6.474830329524495,
+  "sharpe_90d": 4.618299550311586,
+  "sortino_30d": 15.455727754295243,
+  "drawdown_30d": 4.702391115593117,
+  "drawdown_90d": 7.761544464373436,
+  "drawdown_all": 4.702391115593117,
+  "copy_score": 85.36285063705186,
+  "account_value": 310485.310544,
+  "total_ntl_pos": 1455731.557381,
+  "portfolio_graph": [
+    {
+      "timestamp": 1781128560,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1781132160,
+      "equity_usd": -115.025554
+    },
+    {
+      "timestamp": 1781736960,
+      "equity_usd": 1246.239294
+    },
+    {
+      "timestamp": 1782339360,
+      "equity_usd": -1994.028243
+    },
+    {
+      "timestamp": 1782942960,
+      "equity_usd": 4358.929783
+    },
+    {
+      "timestamp": 1783548960,
+      "equity_usd": 9529.050902
+    },
+    {
+      "timestamp": 1784157360,
+      "equity_usd": 23450.472686
+    },
+    {
+      "timestamp": 1784758560,
+      "equity_usd": 37297.151545
+    },
+    {
+      "timestamp": 1785368160,
+      "equity_usd": 25271.400606
+    },
+    {
+      "timestamp": 1785969360,
+      "equity_usd": 30858.528171
+    },
+    {
+      "timestamp": 1786575360,
+      "equity_usd": 26945.756126
+    },
+    {
+      "timestamp": 1787182560,
+      "equity_usd": 68771.287778
+    },
+    {
+      "timestamp": 1787782560,
+      "equity_usd": 147805.548421
+    },
+    {
+      "timestamp": 1788387360,
+      "equity_usd": 142389.024679
+    },
+    {
+      "timestamp": 1788990960,
+      "equity_usd": 168283.124599
+    },
+    {
+      "timestamp": 1789598160,
+      "equity_usd": 139947.216737
+    },
+    {
+      "timestamp": 1790121360,
+      "equity_usd": 240362.055219
+    },
+    {
+      "timestamp": 1790200560,
+      "equity_usd": 214122.318819
+    },
+    {
+      "timestamp": 1790294160,
+      "equity_usd": 255828.472408
+    },
+    {
+      "timestamp": 1790460960,
+      "equity_usd": 373550.276846
+    },
+    {
+      "timestamp": 1790639760,
+      "equity_usd": 428499.036336
+    },
+    {
+      "timestamp": 1790726160,
+      "equity_usd": 431696.087227
+    },
+    {
+      "timestamp": 1790897760,
+      "equity_usd": 454842.165352
+    },
+    {
+      "timestamp": 1790980560,
+      "equity_usd": 451693.949223
+    },
+    {
+      "timestamp": 1791154560,
+      "equity_usd": 469357.788209
+    },
+    {
+      "timestamp": 1791329760,
+      "equity_usd": 466737.541585
+    },
+    {
+      "timestamp": 1791503760,
+      "equity_usd": 470404.284954
+    },
+    {
+      "timestamp": 1791675360,
+      "equity_usd": 471058.925831
+    },
+    {
+      "timestamp": 1791849360,
+      "equity_usd": 497033.091292
+    },
+    {
+      "timestamp": 1791929760,
+      "equity_usd": 498401.45613
+    },
+    {
+      "timestamp": 1792102560,
+      "equity_usd": 479570.865185
+    },
+    {
+      "timestamp": 1792235760,
+      "equity_usd": 463483.673847
+    },
+    {
+      "timestamp": 1792349760,
+      "equity_usd": 444421.118997
+    },
+    {
+      "timestamp": 1792366560,
+      "equity_usd": 459679.251211
+    },
+    {
+      "timestamp": 1792438560,
+      "equity_usd": 472080.533679
+    },
+    {
+      "timestamp": 1792452960,
+      "equity_usd": 475521.953224
+    },
+    {
+      "timestamp": 1792485360,
+      "equity_usd": 471194.069177
+    },
+    {
+      "timestamp": 1792604160,
+      "equity_usd": 497297.345428
+    },
+    {
+      "timestamp": 1792635360,
+      "equity_usd": 497951.235549
+    },
+    {
+      "timestamp": 1792760160,
+      "equity_usd": 476301.204126
+    },
+    {
+      "timestamp": 1792862160,
+      "equity_usd": 448468.804222
+    },
+    {
+      "timestamp": 1792909639,
+      "equity_usd": 447146.022466
+    }
+  ]
+}

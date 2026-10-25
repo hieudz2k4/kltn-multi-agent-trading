@@ -1,13 +1,14 @@
 """Live end-to-end dry run test of SMC Multi-Agent Pipeline with InMemoryRunner."""
 
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
-import sys
-env_path = Path(__file__).resolve().parent.parent / ".env"
+# Load environment configuration from project root .env
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-load_dotenv(dotenv_path=env_path)
+load_dotenv(dotenv_path=ENV_PATH)
 
 from google.adk.runners import InMemoryRunner
 from google.genai import types
@@ -16,7 +17,7 @@ from src.agents.smc.smc_orchestrator import create_smc_orchestrator
 
 
 def test_smc_pipeline_dry_run():
-    """Chạy thử nghiệm 1 chu kỳ SMC pipeline qua InMemoryRunner với mock tools."""
+    """Run a single test cycle of SMC pipeline via InMemoryRunner with mock tools."""
     os.environ["MT5_MOCK"] = "true"
     os.environ["TV_MOCK"] = "true"
 
@@ -29,9 +30,9 @@ def test_smc_pipeline_dry_run():
     )
 
     prompt = (
-        "Thực hiện quy trình phân tích SMC cho symbol 'XAUUSD': "
-        "Chuyển giao cho các sub-agents theo thứ tự: htf_bias_agent -> structure_agent -> poi_agent -> "
-        "sizer_agent -> risk_gatekeeper. Báo cáo kết quả cuối cùng."
+        "Execute SMC analysis workflow for symbol 'XAUUSD': "
+        "Delegate to sub-agents in order: htf_bias_agent -> structure_agent -> poi_agent -> "
+        "sizer_agent -> risk_gatekeeper. Report final results."
     )
     message = types.Content(
         parts=[types.Part.from_text(text=prompt)],
@@ -48,8 +49,8 @@ def test_smc_pipeline_dry_run():
     for evt in events:
         events_list.append(evt)
         print(f"[{evt.author}] {getattr(evt.content, 'parts', '')}")
-    assert len(events_list) > 0, "Pipeline phải trả về ít nhất một event"
-    print(f"\n[SMC Dry Run] Hoàn tất chu kỳ với {len(events_list)} events.")
+    assert len(events_list) > 0, "Pipeline must return at least one event"
+    print(f"\n[SMC Dry Run] Completed cycle with {len(events_list)} events.")
 
 
 if __name__ == "__main__":

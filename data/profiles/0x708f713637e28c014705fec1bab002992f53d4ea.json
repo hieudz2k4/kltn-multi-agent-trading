@@ -1,0 +1,191 @@
+{
+  "address": "0x708f713637e28c014705fec1bab002992f53d4ea",
+  "display_name": null,
+  "size_cohort": "MICRO",
+  "perps_equity": 6022648.619174,
+  "net_pnl": 2021707.323551,
+  "funding_pnl": 83082.290797,
+  "total_trades": 94,
+  "trades_30d": 8,
+  "winrate_30d": 75.0,
+  "winrate_all": 59.57446808510638,
+  "sharpe_all": 5.494662371844156,
+  "sharpe_90d": 3.320244858695871,
+  "sortino_30d": 12.763306497810854,
+  "drawdown_30d": 4.899170594030195,
+  "drawdown_90d": 10.139224338273442,
+  "drawdown_all": 4.899170594030195,
+  "copy_score": 81.75387598534968,
+  "account_value": 100.0,
+  "total_ntl_pos": 0.0,
+  "portfolio_graph": [
+    {
+      "timestamp": 1785360480,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1785364080,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1785970080,
+      "equity_usd": -1202.960109
+    },
+    {
+      "timestamp": 1786572480,
+      "equity_usd": -9113.886314
+    },
+    {
+      "timestamp": 1787177280,
+      "equity_usd": -15474.778203
+    },
+    {
+      "timestamp": 1787786880,
+      "equity_usd": -67054.29607
+    },
+    {
+      "timestamp": 1788391680,
+      "equity_usd": -71568.44329
+    },
+    {
+      "timestamp": 1788991680,
+      "equity_usd": -8881.454636
+    },
+    {
+      "timestamp": 1789595280,
+      "equity_usd": 520436.100606
+    },
+    {
+      "timestamp": 1790206080,
+      "equity_usd": 324156.25322
+    },
+    {
+      "timestamp": 1790290080,
+      "equity_usd": 266306.221414
+    },
+    {
+      "timestamp": 1790375280,
+      "equity_usd": 352842.106781
+    },
+    {
+      "timestamp": 1790464080,
+      "equity_usd": 335471.976279
+    },
+    {
+      "timestamp": 1790551680,
+      "equity_usd": 341194.534647
+    },
+    {
+      "timestamp": 1790639280,
+      "equity_usd": 585626.490936
+    },
+    {
+      "timestamp": 1790719680,
+      "equity_usd": 594511.03596
+    },
+    {
+      "timestamp": 1790807280,
+      "equity_usd": 563981.085328
+    },
+    {
+      "timestamp": 1790897280,
+      "equity_usd": 497160.609958
+    },
+    {
+      "timestamp": 1790983680,
+      "equity_usd": 522182.055618
+    },
+    {
+      "timestamp": 1791065280,
+      "equity_usd": 509997.243546
+    },
+    {
+      "timestamp": 1791152880,
+      "equity_usd": 477206.585627
+    },
+    {
+      "timestamp": 1791238080,
+      "equity_usd": 303420.845383
+    },
+    {
+      "timestamp": 1791325680,
+      "equity_usd": 274670.621005
+    },
+    {
+      "timestamp": 1791412080,
+      "equity_usd": 469350.310279
+    },
+    {
+      "timestamp": 1791503280,
+      "equity_usd": 878944.771445
+    },
+    {
+      "timestamp": 1791584880,
+      "equity_usd": 767216.393841
+    },
+    {
+      "timestamp": 1791672480,
+      "equity_usd": 726211.170645
+    },
+    {
+      "timestamp": 1791760080,
+      "equity_usd": 666690.996315
+    },
+    {
+      "timestamp": 1791845280,
+      "equity_usd": 1037042.944546
+    },
+    {
+      "timestamp": 1791931680,
+      "equity_usd": 1014437.765017
+    },
+    {
+      "timestamp": 1792016880,
+      "equity_usd": 1481863.565723
+    },
+    {
+      "timestamp": 1792103280,
+      "equity_usd": 1482504.354351
+    },
+    {
+      "timestamp": 1792190880,
+      "equity_usd": 1886237.011991
+    },
+    {
+      "timestamp": 1792276080,
+      "equity_usd": 2000801.69156
+    },
+    {
+      "timestamp": 1792354080,
+      "equity_usd": 2037865.993125
+    },
+    {
+      "timestamp": 1792440480,
+      "equity_usd": 1870527.690408
+    },
+    {
+      "timestamp": 1792526880,
+      "equity_usd": 1895402.427549
+    },
+    {
+      "timestamp": 1792615680,
+      "equity_usd": 1714995.312275
+    },
+    {
+      "timestamp": 1792702080,
+      "equity_usd": 2250028.430918
+    },
+    {
+      "timestamp": 1792782480,
+      "equity_usd": 2010324.859494
+    },
+    {
+      "timestamp": 1792858080,
+      "equity_usd": 2111463.786143
+    },
+    {
+      "timestamp": 1792913230,
+      "equity_usd": 2021707.323551
+    }
+  ]
+}

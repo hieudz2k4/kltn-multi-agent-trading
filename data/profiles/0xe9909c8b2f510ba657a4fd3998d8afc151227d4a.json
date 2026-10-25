@@ -1,0 +1,203 @@
+{
+  "address": "0xe9909c8b2f510ba657a4fd3998d8afc151227d4a",
+  "display_name": null,
+  "size_cohort": "WHALE",
+  "perps_equity": 1835783.408285,
+  "net_pnl": 532510.008755,
+  "funding_pnl": 0.0,
+  "total_trades": 93,
+  "trades_30d": 4,
+  "winrate_30d": 75.0,
+  "winrate_all": 55.91397849462365,
+  "sharpe_all": 3.180264804836896,
+  "sharpe_90d": 2.3566743923574687,
+  "sortino_30d": 5.35952160257091,
+  "drawdown_30d": 11.466347357011498,
+  "drawdown_90d": 11.466347357011498,
+  "drawdown_all": 11.466347357011498,
+  "copy_score": 85.37245633175178,
+  "account_value": 0.0,
+  "total_ntl_pos": 0.0,
+  "portfolio_graph": [
+    {
+      "timestamp": 1770849120,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1771456320,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1772059920,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1772665920,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1773270720,
+      "equity_usd": 8478.588601
+    },
+    {
+      "timestamp": 1773870720,
+      "equity_usd": 21842.958875
+    },
+    {
+      "timestamp": 1774479120,
+      "equity_usd": 19649.899567
+    },
+    {
+      "timestamp": 1775082720,
+      "equity_usd": -51687.219748
+    },
+    {
+      "timestamp": 1775692320,
+      "equity_usd": -39133.7
+    },
+    {
+      "timestamp": 1776293520,
+      "equity_usd": -6571.158036
+    },
+    {
+      "timestamp": 1776900720,
+      "equity_usd": 16453.632979
+    },
+    {
+      "timestamp": 1777501920,
+      "equity_usd": -15635.172858
+    },
+    {
+      "timestamp": 1778105520,
+      "equity_usd": -93376.204095
+    },
+    {
+      "timestamp": 1778709120,
+      "equity_usd": -123382.036997
+    },
+    {
+      "timestamp": 1779315120,
+      "equity_usd": -83626.85611
+    },
+    {
+      "timestamp": 1779922320,
+      "equity_usd": -83588.259284
+    },
+    {
+      "timestamp": 1780524720,
+      "equity_usd": -78500.818115
+    },
+    {
+      "timestamp": 1781131920,
+      "equity_usd": -50672.477834
+    },
+    {
+      "timestamp": 1781734320,
+      "equity_usd": -104064.012516
+    },
+    {
+      "timestamp": 1782337920,
+      "equity_usd": -101861.925184
+    },
+    {
+      "timestamp": 1782947520,
+      "equity_usd": -99921.73
+    },
+    {
+      "timestamp": 1783553520,
+      "equity_usd": -99921.73
+    },
+    {
+      "timestamp": 1784153520,
+      "equity_usd": -99921.73
+    },
+    {
+      "timestamp": 1784761920,
+      "equity_usd": -100125.865368
+    },
+    {
+      "timestamp": 1785367920,
+      "equity_usd": -99362.38
+    },
+    {
+      "timestamp": 1785967920,
+      "equity_usd": -100921.804668
+    },
+    {
+      "timestamp": 1786576320,
+      "equity_usd": -101625.67
+    },
+    {
+      "timestamp": 1787183520,
+      "equity_usd": -101625.67
+    },
+    {
+      "timestamp": 1787784720,
+      "equity_usd": -91953.010775
+    },
+    {
+      "timestamp": 1788385920,
+      "equity_usd": -120243.2792
+    },
+    {
+      "timestamp": 1788997920,
+      "equity_usd": -71193.930423
+    },
+    {
+      "timestamp": 1789602720,
+      "equity_usd": -39263.867704
+    },
+    {
+      "timestamp": 1790202720,
+      "equity_usd": 84390.149771
+    },
+    {
+      "timestamp": 1790461920,
+      "equity_usd": 90044.775862
+    },
+    {
+      "timestamp": 1790635920,
+      "equity_usd": 10078.134311
+    },
+    {
+      "timestamp": 1790807520,
+      "equity_usd": 5027.254091
+    },
+    {
+      "timestamp": 1791064320,
+      "equity_usd": -10034.436394
+    },
+    {
+      "timestamp": 1791329520,
+      "equity_usd": 273.703027
+    },
+    {
+      "timestamp": 1791496320,
+      "equity_usd": 322405.808627
+    },
+    {
+      "timestamp": 1791757920,
+      "equity_usd": 199292.239627
+    },
+    {
+      "timestamp": 1792018320,
+      "equity_usd": 526463.086044
+    },
+    {
+      "timestamp": 1792243920,
+      "equity_usd": 530513.587728
+    },
+    {
+      "timestamp": 1792474320,
+      "equity_usd": 679008.566961
+    },
+    {
+      "timestamp": 1792697520,
+      "equity_usd": 766634.830917
+    },
+    {
+      "timestamp": 1792914799,
+      "equity_usd": 532510.008755
+    }
+  ]
+}

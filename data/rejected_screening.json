@@ -1,0 +1,1083 @@
+[
+  {
+    "address": "0xf736381cd7d51e8584eb22571a8d1e267f1bec5a",
+    "rejection_reasons": [
+      "NON_POSITIVE_NET_PNL"
+    ],
+    "account_value": 204597.25638656897,
+    "net_pnl": -129654.045659,
+    "trade_count": 74,
+    "copy_score": 90.9061431711399,
+    "last_trade_at": 1792891660,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x48d7f009eb9f8fe521e8aeb20c62dcce1d03a3f5",
+    "rejection_reasons": [
+      "BELOW_MIN_EQUITY"
+    ],
+    "account_value": 90.10591399602998,
+    "net_pnl": 70396.24978,
+    "trade_count": 46,
+    "copy_score": 86.31872963342907,
+    "last_trade_at": 1792929886,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x45d26f28196d226497130c4bac709d808fed4029",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 55537754.24583802,
+    "net_pnl": 25734426.373499,
+    "trade_count": 3,
+    "copy_score": 23.1124851357392,
+    "last_trade_at": 1792653881,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xfe7ce058edc7cfcde9ef8262ba51f8d4796ab7ae",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 12148304.057908,
+    "net_pnl": 18588223.113606,
+    "trade_count": 85,
+    "copy_score": 0.0,
+    "last_trade_at": 1792909975,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xb695651daa495f59dd2725c6fe98322d8b51a92d",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 49298158.983710006,
+    "net_pnl": 16959477.682304,
+    "trade_count": 8,
+    "copy_score": 45.80949019732612,
+    "last_trade_at": 1792741418,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x3dc908374e11623d8eb9f07dfc7a2e5e803a54b0",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 27683053.320087522,
+    "net_pnl": 12111477.112349998,
+    "trade_count": 1,
+    "copy_score": 14.87907125215658,
+    "last_trade_at": 1792127746,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x9df286bcee3b6b20eddcbe763ddd3a30ef3bc665",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 35937320.597821,
+    "net_pnl": 12101987.087139,
+    "trade_count": 1,
+    "copy_score": 30.20979397410737,
+    "last_trade_at": 1792907783,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xf02d16a272a842f8bac1d9a9e773aba1933454c6",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 31945123.966231152,
+    "net_pnl": 10610221.703512,
+    "trade_count": 3,
+    "copy_score": 40.34302498575755,
+    "last_trade_at": 1792868849,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xb2f7374b222a930d20e8d556f33228211d1baf9f",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 16087503.665807,
+    "net_pnl": 10123476.30937,
+    "trade_count": 3,
+    "copy_score": 0.0,
+    "last_trade_at": 1792599126,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x7dde3fc73c58ff0f057d765e9bb69ecd8322131b",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 27379658.50221906,
+    "net_pnl": 9515619.512657,
+    "trade_count": 591,
+    "copy_score": 50.50511602543151,
+    "last_trade_at": 1792792181,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x023a3d058020fb76cca98f01b3c48c8938a22355",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 6638276.664018,
+    "net_pnl": 7668099.127149,
+    "trade_count": 500,
+    "copy_score": 0.0,
+    "last_trade_at": 1792910158,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x218a65e21eddeece7a9df38c6bbdd89f692b7da2",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 14076727.224445999,
+    "net_pnl": 7520300.897653,
+    "trade_count": 0,
+    "copy_score": 12.023710611299515,
+    "last_trade_at": 1792565721,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xca4903c207a0df58bf37d4bc8bbc5210726f53c8",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 15958877.777159,
+    "net_pnl": 7335519.400056,
+    "trade_count": 0,
+    "copy_score": 0.0,
+    "last_trade_at": 1792577100,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xe0ffc829349c88c159462942ad885f12130e7610",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 12019416.43577369,
+    "net_pnl": 7278267.85043,
+    "trade_count": 0,
+    "copy_score": 2.737209395981968,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x99967871e6c4f9a5185abc57edede9e9540191f6",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 11395075.07277203,
+    "net_pnl": 6899564.592647,
+    "trade_count": 0,
+    "copy_score": 4.322318485884593,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x49e96e255ba418d08e66c35b588e2f2f3766e1d0",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 22361751.95262335,
+    "net_pnl": 6265086.985978,
+    "trade_count": 687,
+    "copy_score": 0.0,
+    "last_trade_at": 1792774731,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xba5d9cc840745aeeeeedac5712e32f13ab8ea352",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 6997079.27307738,
+    "net_pnl": 5624730.277772999,
+    "trade_count": 2,
+    "copy_score": 6.329159923427825,
+    "last_trade_at": 1792731564,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xe9ffe7698f46f96f980f2877e18c43f5b4165903",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 23311039.434756782,
+    "net_pnl": 5531865.670104,
+    "trade_count": 176,
+    "copy_score": 35.32313978970704,
+    "last_trade_at": 1792907822,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x9aa589355bf745db9784c8ef3c646360f11b58af",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 9559905.1719332,
+    "net_pnl": 5279797.845864,
+    "trade_count": 34,
+    "copy_score": 35.16140514457025,
+    "last_trade_at": 1792894871,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x4c78a97cef589b01bb91dbf893fffa14243d2444",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 11498973.119493,
+    "net_pnl": 4976019.200785,
+    "trade_count": 33,
+    "copy_score": 16.56591667149383,
+    "last_trade_at": 1792895536,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x37b81ab9e3ab04b9e3738e4891621205aaa31fd5",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 12941142.853710974,
+    "net_pnl": 4775603.842987,
+    "trade_count": 0,
+    "copy_score": 6.383337062101071,
+    "last_trade_at": 1791969699,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x939f95036d2e7b6d7419ec072bf9d967352204d2",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 7910674.38054281,
+    "net_pnl": 4632992.275471,
+    "trade_count": 3,
+    "copy_score": 20.02179477761612,
+    "last_trade_at": 1792030331,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x354bcb431a332079950d2ce3a4698745e0f66425",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 12932286.136515,
+    "net_pnl": 4600513.419815999,
+    "trade_count": 1350,
+    "copy_score": 24.82025704127086,
+    "last_trade_at": 1792908066,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x60a8c761f39696b3b419f31dcda20b405cb685f6",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 29785484.80916273,
+    "net_pnl": 4360366.626019,
+    "trade_count": 2,
+    "copy_score": 42.96511566243365,
+    "last_trade_at": 1792726731,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x77ee3604adbdefa66a817b3cf776412a6613a018",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 4999999.99866434,
+    "net_pnl": 4185415.2221589996,
+    "trade_count": 30,
+    "copy_score": 44.01951045779642,
+    "last_trade_at": 1792569199,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xda3768e9299e1fd81708ec030dac5ea37125f7b5",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 17084271.111047998,
+    "net_pnl": 4122012.067758,
+    "trade_count": 148,
+    "copy_score": 0.0,
+    "last_trade_at": 1792774805,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xf02d028ffeddc120a3ec59602a6617303ca55eb3",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 13038015.594190689,
+    "net_pnl": 4060024.3639919995,
+    "trade_count": 1,
+    "copy_score": 37.75980446924493,
+    "last_trade_at": 1792012808,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x4bc52d0ab83ed62c91c9a89fc3304e12422a54fb",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 11363077.915218981,
+    "net_pnl": 3940973.276584,
+    "trade_count": 0,
+    "copy_score": 4.8559238258458866,
+    "last_trade_at": 1792060705,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xbfc79c444c41a74516bf31237ebf586a231480b4",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5704524.4348504,
+    "net_pnl": 3932714.168747,
+    "trade_count": 10,
+    "copy_score": 14.667211176024747,
+    "last_trade_at": 1792903526,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xcf5343ba750a6e30afbb1dadda08bc78f8c8ee11",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 14178865.056251349,
+    "net_pnl": 3855530.6771370005,
+    "trade_count": 7,
+    "copy_score": 55.17916825621313,
+    "last_trade_at": 1792808474,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xad59ed47c226987cf458a63428ca10887773ba81",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 9020670.200499,
+    "net_pnl": 3745360.5795309995,
+    "trade_count": 0,
+    "copy_score": 6.964207324644256,
+    "last_trade_at": 1792770830,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x84abc08c0ea62e687c370154de1f38ea462f4d37",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 7555452.797632,
+    "net_pnl": 3718801.3866489995,
+    "trade_count": 10,
+    "copy_score": 16.060577257993877,
+    "last_trade_at": 1792835532,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x6859da14835424957a1e6b397d8026b1d9ff7e1e",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 4869508.352416029,
+    "net_pnl": 3395728.019993,
+    "trade_count": 14,
+    "copy_score": 17.547499996846028,
+    "last_trade_at": 1792826162,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x5647249079e257329ecb6f46ed41821d3c69e7de",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5798359.41138,
+    "net_pnl": 3316143.879123,
+    "trade_count": 52,
+    "copy_score": 9.978626761070295,
+    "last_trade_at": 1792892692,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x9c062c0575c30a3b7614d0c6ea8de67faab00560",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 4904004.2907610005,
+    "net_pnl": 3233852.918922,
+    "trade_count": 64,
+    "copy_score": 23.842965579877486,
+    "last_trade_at": 1792740629,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xe81309ec9b79309e4d108ae3a92d1aa618cd6d74",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 19669126.020694,
+    "net_pnl": 3035947.5858789994,
+    "trade_count": 2,
+    "copy_score": 57.5965741554343,
+    "last_trade_at": 1792829841,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x47f5a6397b79deaaca5c456503e7c1a49357b942",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3632089.38369202,
+    "net_pnl": 2973601.9283699994,
+    "trade_count": 20,
+    "copy_score": 16.699377557385052,
+    "last_trade_at": 1792822262,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xd0b9eb4a18eff14c942eb91d90b6900818ee1199",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 8511265.957431834,
+    "net_pnl": 2948232.5747510004,
+    "trade_count": 0,
+    "copy_score": 7.440057059986807,
+    "last_trade_at": 1792137827,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xacb66d1996501bcc82a0e7819c9e041599f5efbd",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 11321411.38727882,
+    "net_pnl": 2894702.9811719996,
+    "trade_count": 4,
+    "copy_score": 45.11851061193032,
+    "last_trade_at": 1792759363,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x25773676902085225ae5751075e4161369334897",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 11909586.561414,
+    "net_pnl": 2821785.6569419997,
+    "trade_count": 15475,
+    "copy_score": 0.0,
+    "last_trade_at": 1792910149,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xceec48581b3145a575508719f45da07dc57fa7ce",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 13269588.775029114,
+    "net_pnl": 2815721.795562,
+    "trade_count": 0,
+    "copy_score": 18.18266554161842,
+    "last_trade_at": 1791549843,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xe187055ff406f8cdf59fbae53ec20d4ecd9b771d",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5264707.712481233,
+    "net_pnl": 2772276.095969,
+    "trade_count": 1,
+    "copy_score": 0.0,
+    "last_trade_at": 1792036238,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xd1dd6d99c5fb5d31ff52eacce5046c7158859e85",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5959716.85905125,
+    "net_pnl": 2744863.5153579996,
+    "trade_count": 38,
+    "copy_score": 40.400129077207964,
+    "last_trade_at": 1792743306,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x015354106478dda69c4aae3c0cf801290b738052",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D"
+    ],
+    "account_value": 7765698.937253,
+    "net_pnl": 2675908.478658,
+    "trade_count": 1,
+    "copy_score": 87.2979718005263,
+    "last_trade_at": 1791791229,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x3eb6bed67d046fbffb8ada21167e592f3fef5470",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 9054541.873143,
+    "net_pnl": 2666316.646774,
+    "trade_count": 14,
+    "copy_score": 45.943806433997885,
+    "last_trade_at": 1792908066,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x69cc3ae720efdff1cd2a8edec79a7a3fac6e14fd",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 10689634.59991766,
+    "net_pnl": 2568607.4864269993,
+    "trade_count": 75,
+    "copy_score": 0.0,
+    "last_trade_at": 1792864148,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xdf25fbb80ade63b6e94ed1139cc28dea429133eb",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 7060799.188532,
+    "net_pnl": 2554490.7716880003,
+    "trade_count": 0,
+    "copy_score": 0.0,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x3440f23a87f1950e7a88cd248fd270e92d1132c5",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 2745546.116091,
+    "net_pnl": 2528942.451163,
+    "trade_count": 1,
+    "copy_score": 14.493364128501279,
+    "last_trade_at": 1792736229,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xcac19662ec88d23fa1c81ac0e8570b0cf2ff26b3",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 9819008.87237814,
+    "net_pnl": 2427763.948253,
+    "trade_count": 2,
+    "copy_score": 16.002833387462083,
+    "last_trade_at": 1792829990,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x6ea486a3426563e23023125f18867117878f0ea7",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 4846065.198229,
+    "net_pnl": 2305065.255948,
+    "trade_count": 0,
+    "copy_score": 42.07309723369886,
+    "last_trade_at": 1791455195,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x08bf75d17046412ae08c95b6106993f714487872",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 1867459.7103229999,
+    "net_pnl": 2297051.898267,
+    "trade_count": 0,
+    "copy_score": 1.8718122669610753,
+    "last_trade_at": 1792128830,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x781e95fdc049433565cf8e05265361b8402196b7",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3652330.3953500404,
+    "net_pnl": 2252574.699619,
+    "trade_count": 4,
+    "copy_score": 0.0,
+    "last_trade_at": 1792830328,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x77eeda199553e33b246e4b4666849b9ad0972902",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 10239897.611113999,
+    "net_pnl": 2247578.69782,
+    "trade_count": 24,
+    "copy_score": 42.04765022372069,
+    "last_trade_at": 1792662431,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xa20fb0c9e04063eec5be286e9269028d966646fa",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 2746747.92500229,
+    "net_pnl": 2227667.95967,
+    "trade_count": 13,
+    "copy_score": 0.0,
+    "last_trade_at": 1792894068,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xb46bf797b3efd9ae28642bbcd6f7bb6f7b52538e",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 4523422.736904001,
+    "net_pnl": 2117486.922496,
+    "trade_count": 0,
+    "copy_score": 9.271504344787948,
+    "last_trade_at": 1792494588,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xd47587702a91731dc1089b5db0932cf820151a91",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3486225.50816283,
+    "net_pnl": 2105252.460076,
+    "trade_count": 2,
+    "copy_score": 33.20583508075824,
+    "last_trade_at": 1790892422,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x6910c590d8503a1f3ef5ea9b64a5d7c7f3b5feda",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5655371.626467,
+    "net_pnl": 2092825.4931439997,
+    "trade_count": 0,
+    "copy_score": 2.9255650723687903,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xc6aa7b1f1dbe24ca2f12c193b60eb05230270e75",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3270997.83748488,
+    "net_pnl": 2035816.033296,
+    "trade_count": 105,
+    "copy_score": 32.4423685620597,
+    "last_trade_at": 1792909263,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xf929122994e177079c924631ba13fb280f5cd1f9",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 773040.5131,
+    "net_pnl": 2031933.5191320002,
+    "trade_count": 0,
+    "copy_score": 54.817430005271895,
+    "last_trade_at": 1792645219,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x0cc159b29f45c9cc0da41326d7e18e04245bc7cb",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 21931723.653368,
+    "net_pnl": 1996170.7027349998,
+    "trade_count": 0,
+    "copy_score": 18.45546265156891,
+    "last_trade_at": 1792479790,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xc435249d0e837efa5eb431ad74c9fa8889f2c905",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3765177.803286,
+    "net_pnl": 1994977.130552,
+    "trade_count": 2,
+    "copy_score": 49.43765468709973,
+    "last_trade_at": 1792830350,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xa98143608a6846453c88f29506d64a8b85532e65",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5678057.854666269,
+    "net_pnl": 1989734.3386179998,
+    "trade_count": 0,
+    "copy_score": 0.0,
+    "last_trade_at": 1791136763,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x06edffc331dc2897a127f2527c3f795c21299b11",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5759284.004994806,
+    "net_pnl": 1964300.128681,
+    "trade_count": 0,
+    "copy_score": 4.478202766991948,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xb829fd12a23c88e0f1eb85238799f8fd400a3a81",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5864685.109868909,
+    "net_pnl": 1913756.06135,
+    "trade_count": 1,
+    "copy_score": 55.91957876622976,
+    "last_trade_at": 1792054656,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xeaa35d3982d6eeb37e0ab21b5d3a0971cf31fd7f",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5701919.485888932,
+    "net_pnl": 1875020.9021099997,
+    "trade_count": 0,
+    "copy_score": 4.5855089299801985,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x591ed63017d15409c89e7b8f83c11c2059944657",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5741410.026029213,
+    "net_pnl": 1875014.29492,
+    "trade_count": 0,
+    "copy_score": 3.575408654313074,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x8def9f50456c6c4e37fa5d3d57f108ed23992dae",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 5648876.59679689,
+    "net_pnl": 1869641.041213,
+    "trade_count": 0,
+    "copy_score": 0.0,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xe091330c53b971ed4e886f902f18e8544a8d6705",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 1368172.3360117099,
+    "net_pnl": 1786299.891627,
+    "trade_count": 0,
+    "copy_score": 52.98014609210166,
+    "last_trade_at": 1792708953,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x0b8aa35c28b7c6ab18f11dc168f437a8a69fd4f8",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 4289786.180834,
+    "net_pnl": 1785816.6760719998,
+    "trade_count": 0,
+    "copy_score": 0.0,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xfb1898bb5955fdd11704e397104c6a0e0725eb17",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 1944904.20172595,
+    "net_pnl": 1696374.865542,
+    "trade_count": 0,
+    "copy_score": 3.9656759190879263,
+    "last_trade_at": 1792671290,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x28bbaaa5b431ed61ea6a9b3394f76616e00cfca6",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3259783.1809934396,
+    "net_pnl": 1662335.5119629998,
+    "trade_count": 0,
+    "copy_score": 13.695279130926476,
+    "last_trade_at": 1792396206,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xa0b7020185b97f496f523c3f769eebcffcc56165",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 7003054.79813238,
+    "net_pnl": 1653520.313011,
+    "trade_count": 1,
+    "copy_score": 41.29566895667622,
+    "last_trade_at": 1792879166,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xb86dad6ceedd625cb860e6762516f9647f2ef2f3",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3850479.73001366,
+    "net_pnl": 1623722.629433,
+    "trade_count": 0,
+    "copy_score": 0.0,
+    "last_trade_at": 0,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xd507eeef2152d54b8c00cba499340f7b7a59c948",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3927157.80214873,
+    "net_pnl": 1604851.720912,
+    "trade_count": 1,
+    "copy_score": 31.448115268292653,
+    "last_trade_at": 1792340631,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xcd0673721a489b1cea0e2580fa304bcb6cca3186",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 2901045.84450569,
+    "net_pnl": 1571839.688543,
+    "trade_count": 5,
+    "copy_score": 45.507555928243306,
+    "last_trade_at": 1792782494,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x5e9eadc22514f35af45de3ea4c3c9e56d21435ee",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 1202875.981031,
+    "net_pnl": 1529497.6953119999,
+    "trade_count": 0,
+    "copy_score": 0.0,
+    "last_trade_at": 1792126586,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x68f1c1e8e1371d25dff689a3915196db6c5fba1a",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 7491271.088864802,
+    "net_pnl": 1523599.172014,
+    "trade_count": 0,
+    "copy_score": 9.756574697521733,
+    "last_trade_at": 1792479909,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xc44ffe108058eceec48e6a13e2df17a90ec62142",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 7501558.449706184,
+    "net_pnl": 1521871.408112,
+    "trade_count": 0,
+    "copy_score": 10.36752539681556,
+    "last_trade_at": 1792479814,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x10495f72a1623ff2d836a2cbb25eaba7ff92e246",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 7199927.719899094,
+    "net_pnl": 1429436.580317,
+    "trade_count": 0,
+    "copy_score": 10.724250105375756,
+    "last_trade_at": 1792830371,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xc6877a65349b0fa45cc61a267ee682c7abf2b369",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3365680.1399887903,
+    "net_pnl": 1412995.941752,
+    "trade_count": 1,
+    "copy_score": 37.81214966575601,
+    "last_trade_at": 1792645189,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x5559da6ec434c5723d0ce9c4da7f29e3f8a3d43b",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3234625.10962602,
+    "net_pnl": 1409912.92475,
+    "trade_count": 25,
+    "copy_score": 29.3439883360037,
+    "last_trade_at": 1792898549,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x3e2fbe61f37f11d68e3d1e4f25c53c73f414b269",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3794060.47256055,
+    "net_pnl": 1349094.1087939998,
+    "trade_count": 8,
+    "copy_score": 20.823016259050256,
+    "last_trade_at": 1792715521,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x45f717946a3fb49054ebebecbb1ab8ce9325f166",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D"
+    ],
+    "account_value": 3855939.33473016,
+    "net_pnl": 1345032.737887,
+    "trade_count": 4,
+    "copy_score": 85.27295451597259,
+    "last_trade_at": 1791792444,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xe4d1fa7e6141f9131345117bdb8b5701bca67662",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 2063111.089519,
+    "net_pnl": 1343993.030012,
+    "trade_count": 0,
+    "copy_score": 6.0077832937098234,
+    "last_trade_at": 1792829776,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x9606f4e2f924cb0216b83ca7deca2ab486e64e5d",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 2338489.811334,
+    "net_pnl": 1343232.996797,
+    "trade_count": 2,
+    "copy_score": 19.077867741572966,
+    "last_trade_at": 1792807783,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x91a9cadcd7e36cbe8ff604cb634307d7b7643f70",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 3569960.673568916,
+    "net_pnl": 1304501.1029069999,
+    "trade_count": 1,
+    "copy_score": 26.206641812066614,
+    "last_trade_at": 1792569833,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0x80a3f44e8a00f73577853433409ec6507fb96546",
+    "rejection_reasons": [
+      "INACTIVE_OVER_7D",
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 6651418.17116051,
+    "net_pnl": 1299878.5240489999,
+    "trade_count": 0,
+    "copy_score": 5.123364237846889,
+    "last_trade_at": 1791457725,
+    "discovered_at": 1792936268
+  },
+  {
+    "address": "0xb0fbfefc6c325964d0ffc3f909bdda80b8421326",
+    "rejection_reasons": [
+      "BELOW_MIN_COPY_SCORE"
+    ],
+    "account_value": 864319.1912126394,
+    "net_pnl": 1250376.584031,
+    "trade_count": 6,
+    "copy_score": 15.057983397044868,
+    "last_trade_at": 1792910139,
+    "discovered_at": 1792936268
+  }
+]

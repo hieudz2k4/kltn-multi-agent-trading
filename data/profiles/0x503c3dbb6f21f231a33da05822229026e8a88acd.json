@@ -1,0 +1,287 @@
+{
+  "address": "0x503c3dbb6f21f231a33da05822229026e8a88acd",
+  "display_name": null,
+  "size_cohort": "WHALE",
+  "perps_equity": 257096.93527475,
+  "net_pnl": 822273.779979,
+  "funding_pnl": 0.0,
+  "total_trades": 5382,
+  "trades_30d": 3673,
+  "winrate_30d": 26.81731554587531,
+  "winrate_all": 28.762541806020064,
+  "sharpe_all": 7.629970327855735,
+  "sharpe_90d": 4.405165422696365,
+  "sortino_30d": 15.018112279791143,
+  "drawdown_30d": 2.4999559674035425,
+  "drawdown_90d": 2.4999559674035425,
+  "drawdown_all": 2.4999559674035425,
+  "copy_score": 88.97986775272376,
+  "account_value": 253128.76233,
+  "total_ntl_pos": 273330.197557,
+  "portfolio_graph": [
+    {
+      "timestamp": 1756331280,
+      "equity_usd": 0.0
+    },
+    {
+      "timestamp": 1756334880,
+      "equity_usd": 46521.606967
+    },
+    {
+      "timestamp": 1756940880,
+      "equity_usd": 121135.459186
+    },
+    {
+      "timestamp": 1757540880,
+      "equity_usd": 69178.222273
+    },
+    {
+      "timestamp": 1758146880,
+      "equity_usd": 18585.409083
+    },
+    {
+      "timestamp": 1758756480,
+      "equity_usd": 124119.639796
+    },
+    {
+      "timestamp": 1759363118,
+      "equity_usd": 233484.587931
+    },
+    {
+      "timestamp": 1759967824,
+      "equity_usd": 243257.374983
+    },
+    {
+      "timestamp": 1760572723,
+      "equity_usd": 415299.578937
+    },
+    {
+      "timestamp": 1761177388,
+      "equity_usd": 532340.834068
+    },
+    {
+      "timestamp": 1761782273,
+      "equity_usd": 445480.713613
+    },
+    {
+      "timestamp": 1762387018,
+      "equity_usd": 578508.838142
+    },
+    {
+      "timestamp": 1762988880,
+      "equity_usd": 639721.833066
+    },
+    {
+      "timestamp": 1763596701,
+      "equity_usd": 695454.71191
+    },
+    {
+      "timestamp": 1764201454,
+      "equity_usd": 647213.455253
+    },
+    {
+      "timestamp": 1764803280,
+      "equity_usd": 634161.6523
+    },
+    {
+      "timestamp": 1765405680,
+      "equity_usd": 751605.438128
+    },
+    {
+      "timestamp": 1766012880,
+      "equity_usd": 869728.909843
+    },
+    {
+      "timestamp": 1766620793,
+      "equity_usd": 802033.39428
+    },
+    {
+      "timestamp": 1767223680,
+      "equity_usd": 776484.976719
+    },
+    {
+      "timestamp": 1767829680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1768434480,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1769038080,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1769641680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1770241680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1770850080,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1771453680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1772063280,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1772662080,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1773271680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1773875280,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1774482480,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1775082480,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1775692080,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1776290880,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1776895680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1777500480,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1778111280,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1778712480,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1779317280,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1779920880,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1780530480,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1781132880,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1781737680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1782341280,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1782949680,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1783550880,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1784159280,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1784762880,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1785368880,
+      "equity_usd": 768638.27823
+    },
+    {
+      "timestamp": 1785970080,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1786572480,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1787177280,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1787784480,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1788391680,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1788991680,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1789595280,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1790117280,
+      "equity_usd": 768638.27
+    },
+    {
+      "timestamp": 1790374080,
+      "equity_usd": 768667.944179
+    },
+    {
+      "timestamp": 1790633280,
+      "equity_usd": 767275.982525
+    },
+    {
+      "timestamp": 1791065280,
+      "equity_usd": 781607.295846
+    },
+    {
+      "timestamp": 1791503280,
+      "equity_usd": 780324.312222
+    },
+    {
+      "timestamp": 1791931680,
+      "equity_usd": 814365.931327
+    },
+    {
+      "timestamp": 1792298880,
+      "equity_usd": 813104.839952
+    },
+    {
+      "timestamp": 1792670880,
+      "equity_usd": 827132.883233
+    },
+    {
+      "timestamp": 1792872614,
+      "equity_usd": 822273.779979
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-"""Live test: Google ADK execution và telemetry tracking (Gemini 3.8 Flash)."""
+"""Live integration test: Google ADK execution and telemetry tracking with Gemini Flash."""
 
 import os
 import time
@@ -7,9 +7,9 @@ from typing import Any, Dict
 import pytest
 from dotenv import load_dotenv
 
-# Load .env
-env_path = Path(__file__).resolve().parent.parent / ".env"
-load_dotenv(dotenv_path=env_path)
+# Load environment configuration from project root .env
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
 
 from google.adk.agents.llm_agent import Agent
 from google.adk.runners import InMemoryRunner
@@ -17,7 +17,7 @@ from google.genai import types
 
 
 def get_live_xauusd_quote(timeframe: str = "M15") -> Dict[str, Any]:
-    """Giả lập lấy quote XAUUSD từ MT5."""
+    """Simulate retrieving XAUUSD quote from MT5."""
     print(f"\n[Tool Executed] get_live_xauusd_quote(timeframe='{timeframe}')")
     return {
         "symbol": "XAUUSD",
@@ -30,49 +30,49 @@ def get_live_xauusd_quote(timeframe: str = "M15") -> Dict[str, Any]:
             "high": 2738.20,
             "low": 2729.50,
             "close": 2735.50,
-            "pattern": "Bullish Pinbar quét thanh khoản đáy cũ tại 2729.50",
+            "pattern": "Bullish Pinbar sweeping old low liquidity at 2729.50",
         },
     }
 
 
 def test_live_adk_agent_execution_and_telemetry():
-    """Kiểm tra gọi Gemini qua ADK và thu thập telemetry."""
+    """Verify Gemini invocation via Google ADK and telemetry metrics collection."""
     api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
     if not api_key:
-        msg = "Bỏ qua: Thiếu GOOGLE_API_KEY hoặc GEMINI_API_KEY trong .env"
+        msg = "Skipped: Missing GOOGLE_API_KEY or GEMINI_API_KEY in .env"
         if __name__ == "__main__":
             print(msg)
             return
         pytest.skip(msg)
 
-    # 1. Khởi tạo Agent
+    # 1. Initialize Agent
     agent = Agent(
         model="gemini-2.5-flash",
         name="smc_market_analyst",
-        description="Chuyên gia phân tích thị trường vàng theo cấu trúc SMC.",
+        description="Expert in gold market technical analysis using Smart Money Concepts (SMC).",
         instruction=(
-            "Bạn là chuyên gia phân tích kỹ thuật theo Smart Money Concepts (SMC). "
-            "Khi người dùng hỏi về XAUUSD, hãy luôn gọi tool 'get_live_xauusd_quote' để lấy dữ liệu nến thực tế, "
-            "sau đó nhận định ngắn gọn về xu hướng và điểm quét thanh khoản trong đúng 2 câu."
+            "You are a technical analysis expert in Smart Money Concepts (SMC). "
+            "When asked about XAUUSD, always call the 'get_live_xauusd_quote' tool to fetch live candle data, "
+            "then provide a concise 2-sentence summary of market bias and liquidity sweep levels."
         ),
         tools=[get_live_xauusd_quote],
     )
 
-    # 2. Tạo Runner & Session
+    # 2. Initialize Runner & Session
     runner = InMemoryRunner(agent=agent, app_name="kltn_trading_system")
     session = runner.session_service.create_session_sync(
         app_name=runner.app_name,
         user_id="trader_hieu",
     )
 
-    # 3. Chuẩn bị prompt
-    user_prompt = "Hãy kiểm tra dữ liệu nến XAUUSD M15 gần nhất và đưa ra nhận định xu hướng cho tôi."
+    # 3. Prepare User Message
+    user_prompt = "Check the latest XAUUSD M15 candle data and provide market bias."
     message = types.Content(
         parts=[types.Part.from_text(text=user_prompt)],
         role="user",
     )
 
-    # 4. Chạy và theo dõi events
+    # 4. Execute and Process Events
     start_time = time.time()
     events = runner.run(
         user_id="trader_hieu",
@@ -108,10 +108,10 @@ def test_live_adk_agent_execution_and_telemetry():
 
     elapsed_time = time.time() - start_time
 
-    # 5. Kết quả phản hồi
+    # 5. Output Response
     print(f"\n[Response]\n{final_text_response.strip()}\n")
 
-    # 6. Kiểm tra Telemetry
+    # 6. Verify Telemetry Metadata
     if telemetry_metadata:
         prompt_tokens = getattr(telemetry_metadata, "prompt_token_count", 0) or 0
         candidates_tokens = getattr(telemetry_metadata, "candidates_token_count", 0) or 0
@@ -123,12 +123,12 @@ def test_live_adk_agent_execution_and_telemetry():
             f"Total tokens: {total_tokens} | "
             f"Latency: {elapsed_time:.2f}s"
         )
-        assert total_tokens > 0, "Tổng số token phải lớn hơn 0"
-        assert prompt_tokens > 0, "Số prompt token phải lớn hơn 0"
+        assert total_tokens > 0, "Total tokens must be greater than 0"
+        assert prompt_tokens > 0, "Prompt tokens must be greater than 0"
     else:
-        print("[Telemetry] Không tìm thấy usage_metadata.")
+        print("[Telemetry] usage_metadata not found.")
 
-    assert len(final_text_response) > 0, "Phản hồi không được để trống"
+    assert len(final_text_response) > 0, "Response text must not be empty"
 
 
 if __name__ == "__main__":

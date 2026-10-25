@@ -33,7 +33,7 @@ from src.core.state import (
 
 
 def test_agent_hierarchy_and_sub_agents():
-    """Kiểm tra cây phân cấp ADK sub_agents của SMC Orchestrator."""
+    """Verify ADK sub_agents hierarchy tree of SMC Orchestrator."""
     orchestrator = create_smc_orchestrator()
     assert orchestrator.name == "smc_orchestrator"
     assert len(orchestrator.sub_agents) == 5
@@ -49,7 +49,7 @@ def test_agent_hierarchy_and_sub_agents():
 
 
 def test_output_schema_and_keys():
-    """Kiểm tra tính toàn vẹn của output_schema và output_key trên từng agent."""
+    """Verify output_schema and output_key integrity on each agent."""
     htf = create_htf_bias_agent()
     struct = create_structure_agent()
     poi = create_poi_agent()
@@ -73,8 +73,8 @@ def test_output_schema_and_keys():
 
 
 def test_smc_setup_rr_validation():
-    """Kiểm tra logic tự động vô hiệu hóa setup nếu R:R < 2.0."""
-    # Case 1: Setup đạt chuẩn R:R >= 2.0
+    """Verify automatic invalidation of trade setups with R:R < 2.0."""
+    # Case 1: Compliant setup with R:R >= 2.0
     valid_setup = SMCSetup(
         symbol="XAUUSD",
         htf_bias=HTFBiasEnum.BULLISH,
@@ -91,7 +91,7 @@ def test_smc_setup_rr_validation():
     )
     assert valid_setup.is_valid is True
 
-    # Case 2: Setup vi phạm R:R < 2.0 -> validator tự ép is_valid = False
+    # Case 2: Setup violating R:R < 2.0 -> validator must force is_valid = False
     invalid_setup = SMCSetup(
         symbol="XAUUSD",
         htf_bias=HTFBiasEnum.BULLISH,
@@ -104,22 +104,24 @@ def test_smc_setup_rr_validation():
         lot_size=0.15,
         risk_reward_ratio=1.0,
         pip_distance_sl=20.0,
-        is_valid=True,  # Cố tình truyền True
+        is_valid=True,  # Explicitly passing True to test validation override
     )
-    assert invalid_setup.is_valid is False, "Setup R:R < 2.0 phải bị ép thành is_valid=False"
+    assert invalid_setup.is_valid is False, "Setup with R:R < 2.0 must be forced to is_valid=False"
 
 
 def test_circuit_breaker_drawdown_halt():
-    """Kiểm tra Circuit Breaker ngắt khẩn cấp khi drawdown <= -3%."""
+    """Verify Circuit Breaker emergency halt on daily drawdown <= -3%."""
     os.environ["MT5_MOCK"] = "true"
+    import src.tools.mt5_tools
+    src.tools.mt5_tools._USE_MOCK = True
     cb = CircuitBreaker(initial_daily_balance=10000.0)
 
-    # 1. Equity bình thường ($9,800 = -2.0% DD) -> Không ngắt
+    # 1. Normal equity ($9,800 = -2.0% DD) -> No halt
     state1 = cb.check_equity(current_equity=9800.0)
     assert state1.is_active is False
     assert state1.current_daily_drawdown_pct == -2.0
 
-    # 2. Equity giảm mạnh ($9,690 = -3.1% DD) -> KÍCH HOẠT HALT KHẨN CẤP
+    # 2. Severe equity drop ($9,690 = -3.1% DD) -> TRIGGER EMERGENCY HALT
     state2 = cb.check_equity(current_equity=9690.0)
     assert state2.is_active is True
     assert state2.current_daily_drawdown_pct == -3.1
@@ -128,7 +130,7 @@ def test_circuit_breaker_drawdown_halt():
 
 
 def test_circuit_breaker_consecutive_losses():
-    """Kiểm tra Circuit Breaker ngắt sau 3 lệnh thua liên tiếp."""
+    """Verify Circuit Breaker halt after 3 consecutive trade losses."""
     cb = CircuitBreaker(initial_daily_balance=10000.0)
     assert cb.state.consecutive_losses == 0
 
