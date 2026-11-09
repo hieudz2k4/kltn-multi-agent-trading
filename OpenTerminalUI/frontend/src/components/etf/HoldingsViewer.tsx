@@ -1,0 +1,89 @@
+import { useEffect, useState } from "react";
+import { TerminalTable, type TerminalTableColumn } from "../terminal/TerminalTable";
+import { getAccessToken } from "../../api/base";
+
+interface Holding {
+  symbol: string;
+  name: string;
+  weight: number;
+}
+
+interface Props {
+  ticker: string;
+}
+
+export function HoldingsViewer({ ticker }: Props) {
+  const [holdings, setHoldings] = useState<Holding[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!ticker) return;
+
+    let cancelled = false;
+    const fetchHoldings = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const token = getAccessToken();
+        const response = await fetch(`/api/etf/holdings?ticker=${encodeURIComponent(ticker)}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!response.ok) throw new Error(`Failed to load holdings (${response.status})`);
+        const data = await response.json();
+        if (cancelled) return;
+        setHoldings(Array.isArray(data?.holdings) ? data.holdings : []);
+      } catch (err) {
+        if (cancelled) return;
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchHoldings();
+    return () => {
+      cancelled = true;
+    };
+  }, [ticker]);
+
+  const columns: TerminalTableColumn<Holding>[] = [
+    {
+      key: "symbol",
+      label: "Symbol",
+      sortable: true,
+      render: (h) => <span className="font-medium text-terminal-accent">{h.symbol}</span>,
+    },
+    {
+      key: "name",
+      label: "Name",
+      sortable: true,
+      render: (h) => <span className="truncate text-terminal-text">{h.name}</span>,
+    },
+    {
+      key: "weight",
+      label: "Weight (%)",
+      align: "right",
+      sortable: true,
+      render: (h) => <span className="text-terminal-text">{Number.isFinite(h.weight) ? `${h.weight.toFixed(2)}%` : "-"}</span>,
+    },
+  ];
+
+  if (loading) return <div className="p-4 text-center text-terminal-muted">Loading holdings...</div>;
+  if (error) return <div className="p-4 text-center text-terminal-neg">{error}</div>;
+
+  return (
+    <div className="rounded border border-terminal-border bg-terminal-panel p-1">
+      <div className="mb-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-terminal-muted">
+        Top Holdings: {ticker}
+      </div>
+      <TerminalTable
+        columns={columns}
+        rows={holdings}
+        rowKey={(h) => h.symbol}
+        emptyText="No holdings data available"
+        density="compact"
+      />
+    </div>
+  );
+}

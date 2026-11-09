@@ -18,6 +18,9 @@ STATE_POI_ZONE: Final[str] = "poi_zone"                  # POIZone model (JSON d
 # SMC Position Sizer output
 STATE_SMC_SETUP: Final[str] = "smc_setup"                # SMCSetup model (JSON dict)
 
+# Macro News & Sentiment output
+STATE_MACRO_SENTIMENT: Final[str] = "macro_sentiment"    # MacroSentiment model (JSON dict)
+
 # CSR Portfolio output
 STATE_CSR_SIGNAL: Final[str] = "csr_signal"              # CSRSignal model (JSON dict)
 

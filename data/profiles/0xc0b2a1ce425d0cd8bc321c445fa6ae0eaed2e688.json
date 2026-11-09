@@ -4,7 +4,7 @@
   "size_cohort": "WHALE",
   "perps_equity": 720496.2057485061,
   "net_pnl": 827102.086238,
-  "funding_pnl": 0.0,
+  "funding_pnl": -10052.05,
   "total_trades": 502,
   "trades_30d": 116,
   "winrate_30d": 78.44827586206897,

@@ -21,8 +21,6 @@ from src.hyperdash_data_pipeline.schemas import (
 
 log = get_logger("hyperdash_transform")
 
-ROUND_INTERVAL_BASES_SEC = (60.0, 300.0, 900.0, 3600.0)
-
 
 # Boundary cases: account_value <= 0 -> NaN; empty fills_df -> NaN;
 # supports either explicit 'notional' column or 'px' * 'sz'.
@@ -35,8 +33,9 @@ def compute_effective_leverage(
     if account_value <= 0.0 or fills_df.empty:
         return float("nan")
     realtime_lev = total_ntl_pos / account_value
-    if "notional" in fills_df.columns:
-        max_notional = float(fills_df["notional"].astype(float).max())
+    has_notional = "notional" in fills_df.columns and fills_df["notional"].notna().any()
+    if has_notional:
+        max_notional = float(fills_df["notional"].dropna().astype(float).max())
     else:
         notional_series = fills_df["px"].astype(float) * fills_df["sz"].astype(float)
         max_notional = float(notional_series.max())
@@ -112,15 +111,8 @@ def compute_calmar_ratio(
     return float(annualized_return_pct / max_drawdown_all_pct)
 
 
-def compute_avg_holding_seconds(fills_df: pd.DataFrame) -> float:
-    """Estimate median position holding duration in seconds between Open and Close cycles."""
-    if len(fills_df) < 2 or "time" not in fills_df.columns:
-        return 0.0
-    sorted_df = fills_df.sort_values("time")
-    if not {"coin", "dir"}.issubset(sorted_df.columns):
-        intervals = np.diff(sorted_df["time"].astype(float).to_numpy() / 1_000.0)
-        pos = intervals[intervals > 0.0]
-        return float(np.median(pos)) if len(pos) > 0 else 0.0
+def extract_cycle_durations(sorted_df: pd.DataFrame) -> list[float]:
+    """Match Open and Close fill timestamps per coin to compute holding durations in seconds."""
     open_ts_by_coin: dict[str, float] = {}
     durations: list[float] = []
     for coin, direction, ts_ms in zip(
@@ -136,6 +128,26 @@ def compute_avg_holding_seconds(fills_df: pd.DataFrame) -> float:
             hold_sec = ts_sec - open_ts_by_coin.pop(coin)
             if hold_sec > 0.0:
                 durations.append(hold_sec)
+    return durations
+
+
+def compute_avg_holding_seconds(fills_df: pd.DataFrame) -> float:
+    """Estimate median position holding duration in seconds from completed trades or Open-Close cycles."""
+    if fills_df.empty:
+        return 0.0
+    if "duration_mins" in fills_df.columns and fills_df["duration_mins"].notna().any():
+        pos_mins = fills_df["duration_mins"].dropna().astype(float)
+        pos_mins = pos_mins[pos_mins > 0.0]
+        if not pos_mins.empty:
+            return float(np.median(pos_mins) * 60.0)
+    if len(fills_df) < 2 or "time" not in fills_df.columns:
+        return 0.0
+    sorted_df = fills_df.sort_values("time")
+    if not {"coin", "dir"}.issubset(sorted_df.columns):
+        pos = np.diff(sorted_df["time"].astype(float).to_numpy() / 1_000.0)
+        pos = pos[pos > 0.0]
+        return float(np.median(pos)) if len(pos) > 0 else 0.0
+    durations = extract_cycle_durations(sorted_df)
     return float(np.median(durations)) if durations else 0.0
 
 
@@ -166,69 +178,6 @@ def evaluate_quality_tier(
     if equity_r2 >= 0.75:
         return QualityTier.PASS.value
     return QualityTier.REJECT.value
-
-
-def check_activity_density(timestamps_sec: np.ndarray) -> bool:
-    """Return True if >= 70% of 6-hour windows in up to 14 days contain at least 1 fill."""
-    if len(timestamps_sec) < 10:
-        return False
-    end_ts = float(timestamps_sec[-1])
-    start_ts = max(float(timestamps_sec[0]), end_ts - 14.0 * 86_400.0)
-    total_buckets = max(1, math.ceil((end_ts - start_ts) / 21_600.0))
-    if total_buckets < 4:
-        return False
-    recent_ts = timestamps_sec[timestamps_sec >= start_ts]
-    occupied_buckets = len(np.unique(((recent_ts - start_ts) // 21_600.0).astype(int)))
-    return (occupied_buckets / total_buckets) >= 0.70
-
-
-def is_near_round_interval(delta_sec: float, tolerance_sec: float = 3.0) -> bool:
-    """Return True if delta_sec is within tolerance of a multiple of 60/300/900/3600s."""
-    for base in ROUND_INTERVAL_BASES_SEC:
-        if delta_sec >= base * 0.8:
-            remainder = delta_sec % base
-            if remainder <= tolerance_sec or (base - remainder) <= tolerance_sec:
-                return True
-    return False
-
-
-def check_periodic_clustering(timestamps_sec: np.ndarray) -> bool:
-    """Return True if CV(Δt) < 0.20 or >= 60% of intervals cluster at round periods."""
-    if len(timestamps_sec) < 5:
-        return False
-    deltas = np.diff(timestamps_sec)
-    positive_deltas = deltas[deltas > 0.0]
-    if len(positive_deltas) < 4:
-        return False
-    mean_dt = float(positive_deltas.mean())
-    std_dt = float(positive_deltas.std(ddof=1))
-    if mean_dt > 0.0 and (std_dt / mean_dt) < 0.20:
-        return True
-    round_matches = sum(1 for dt in positive_deltas if is_near_round_interval(float(dt)))
-    return (round_matches / len(positive_deltas)) >= 0.60
-
-
-def check_high_frequency(timestamps_sec: np.ndarray) -> bool:
-    """Return True if average daily fills over the observed window exceed 50 fills/day."""
-    if len(timestamps_sec) < 50:
-        return False
-    span_days = max(( float(timestamps_sec[-1]) - float(timestamps_sec[0]) ) / 86_400.0, 1.0)
-    return (len(timestamps_sec) / span_days) > 50.0
-
-
-def detect_is_algo(fills_df: pd.DataFrame) -> bool:
-    """Classify trader as algorithmic if at least 2 of 3 temporal criteria hold."""
-    if len(fills_df) < 5 or "time" not in fills_df.columns:
-        return False
-    timestamps_sec = np.sort(fills_df["time"].astype(float).to_numpy() / 1_000.0)
-    criteria_passed = sum(
-        [
-            check_activity_density(timestamps_sec),
-            check_periodic_clustering(timestamps_sec),
-            check_high_frequency(timestamps_sec),
-        ]
-    )
-    return criteria_passed >= 2
 
 
 def collapse_partial_fills(fills_df: pd.DataFrame) -> pd.DataFrame:
@@ -337,7 +286,6 @@ def enrich_single_trader(
         funding_pnl_pct=funding_pct,
         quality_tier=quality_tier,
         smoothness_tier=classify_smoothness_tier(r_squared, beta),
-        is_algo=detect_is_algo(fills_df),
         strategy_tag=classify_strategy_tag(fills_df, funding_pct, avg_hold_sec),
     )
 

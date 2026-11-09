@@ -7,8 +7,13 @@ Usage:
 """
 
 import sys
+from pathlib import Path
 
 from loguru import logger
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+LOGS_DIR = PROJECT_ROOT / "logs"
+LOG_FILE = LOGS_DIR / "trading_system.log"
 
 
 def get_logger(name: str):
@@ -24,8 +29,9 @@ def get_logger(name: str):
             "{message}"
         ),
     )
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
     logger.add(
-        "logs/trading_system.log",
+        str(LOG_FILE),
         rotation="10 MB",
         retention="7 days",
         level="INFO",

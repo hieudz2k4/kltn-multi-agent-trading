@@ -4,7 +4,7 @@
   "size_cohort": "MID",
   "perps_equity": 312974.0908566181,
   "net_pnl": 223493.793577,
-  "funding_pnl": 0.0,
+  "funding_pnl": -1208.8599999999992,
   "total_trades": 25,
   "trades_30d": 1,
   "winrate_30d": 100.0,

@@ -48,7 +48,6 @@ from src.hyperdash_data_pipeline.transform import (
     classify_strategy_tag,
     compute_effective_leverage,
     compute_equity_regression,
-    detect_is_algo,
     evaluate_quality_tier,
     run_transform,
 )
@@ -259,32 +258,12 @@ def test_closed_interval_quality_gate_one() -> None:
     assert evaluate_quality_tier(0.98, 250.0, 30) == QualityTier.GOLD.value
 
 
-def test_detect_is_algo_and_strategy_classification() -> None:
-    """Verify CV(delta_t) < 0.20 + high-frequency/density bot detection and strategy tags."""
-    # 60 periodic fills spaced every 60,000 ms (60s) -> CV(dt) == 0.0 < 0.20 & >50 fills/day -> True
-    periodic_fills = pd.DataFrame(
-        [
-            {
-                "tid": i,
-                "coin": "ETH",
-                "side": "B",
-                "px": 2500.0,
-                "sz": 1.0,
-                "time": 1_700_000_000_000 + i * 60_000,
-                "fee": 0.5,
-                "closed_pnl": 10.0 if i % 2 == 0 else 0.0,
-                "dir": "Open Long" if i % 2 == 0 else "Close Long",
-            }
-            for i in range(60)
-        ]
-    )
-    assert detect_is_algo(periodic_fills) is True
-
-    # Irregular human fills across several days -> is_algo False
+def test_strategy_classification() -> None:
+    """Verify strategy tag classification rules across funding carry, momentum, and trend."""
     rng = np.random.default_rng(42)
     irregular_gaps = rng.integers(5_000_000, 45_000_000, size=12)
     timestamps = np.cumsum(irregular_gaps) + 1_700_000_000_000
-    human_fills = pd.DataFrame(
+    sample_fills = pd.DataFrame(
         [
             {
                 "tid": idx,
@@ -300,15 +279,17 @@ def test_detect_is_algo_and_strategy_classification() -> None:
             for idx, ts in enumerate(timestamps)
         ]
     )
-    assert detect_is_algo(human_fills) is False
 
-    # Funding carry strategy (>=50% funding PnL contribution)
     assert (
-        classify_strategy_tag(human_fills, funding_pnl_pct=55.0, avg_holding_sec=36_000.0)
+        classify_strategy_tag(sample_fills, funding_pnl_pct=55.0, avg_holding_sec=36_000.0)
         == StrategyTag.FUNDING_CARRY.value
     )
     assert (
-        classify_strategy_tag(human_fills, funding_pnl_pct=5.0, avg_holding_sec=20_000.0)
+        classify_strategy_tag(sample_fills, funding_pnl_pct=5.0, avg_holding_sec=3_600.0)
+        == StrategyTag.BREAKOUT_MOMENTUM.value
+    )
+    assert (
+        classify_strategy_tag(sample_fills, funding_pnl_pct=5.0, avg_holding_sec=20_000.0)
         == StrategyTag.TREND_DISCRETIONARY.value
     )
 

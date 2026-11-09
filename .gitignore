@@ -1,4 +1,6 @@
-# Operating System
+# ==============================================================================
+# Operating System & Filesystem Artifacts
+# ==============================================================================
 .DS_Store
 .DS_Store?
 ._*
@@ -6,8 +8,11 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Python
+# ==============================================================================
+# Python Runtime & Package Caches
+# ==============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -33,46 +38,121 @@ wheels/
 .installed.cfg
 *.egg
 .pytest_cache/
+**/.pytest_cache/
 .coverage
 htmlcov/
+coverage.xml
 
-# Node.js / JavaScript
+# ==============================================================================
+# Node.js / Frontend / Package Managers
+# ==============================================================================
 node_modules/
+**/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.pnpm-store/
+**/.pnpm-store/
+dist/
+**/dist/
+playwright-report/
+test-results/
 
-# Environment Variables & Secrets
+# ==============================================================================
+# Environment Variables, Secrets & API Keys
+# ==============================================================================
+.env
+.env.*
 *.env
 *.env.*
+**/.env
+**/.env.*
 !.env.example
+!**/.env.example
+
+# Certificates, Keys & Credentials
 *.pem
 *.key
 *.cert
+*.crt
+*.pfx
+*.p12
+*.keystore
+id_rsa*
+id_ed25519*
+*credentials*.json
+service_account*.json
+token.json
+client_secret*.json
 
+# Broker / MetaTrader Credentials & Configurations
+*.set
+accounts.ini
+account_*.json
+live_positions.json
+paper_trading_state.json
+
+# ==============================================================================
 # Logs & Runtime
+# ==============================================================================
 *.log
 logs/
+*.pid
+*.seed
+*.crash
 
-# IDE
+# ==============================================================================
+# IDE & Editors
+# ==============================================================================
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# Linter & Type Checkers
+# ==============================================================================
+# Linters, Type Checkers & Tool Caches
+# ==============================================================================
 .ruff_cache/
+**/.ruff_cache/
 .mypy_cache/
+**/.mypy_cache/
 
+# ==============================================================================
+# MLflow, Trace Logs & Evaluation Runs
+# ==============================================================================
+mlruns/
+mlartifacts/
+.mlflow/
+eval_result.json
+eval_results/
+.promptfoo/
+promptfoo-cache/
+
+# ==============================================================================
 # Jupyter Notebooks
+# ==============================================================================
 .ipynb_checkpoints/
 
-# Third-party references
-QuantaAlpha/
-
-# Trading Data & Backtest Artifacts
-reports/
-*.feather
+# ==============================================================================
+# Databases, In-Memory Dumps & Data Caches
+# ==============================================================================
+*.sqlite
 *.sqlite3
 *.db
+*.db-shm
+*.db-wal
+*.feather
+*.duckdb
+*.duckdb.wal
+dump.rdb
+*.rdb
+OpenTerminalUI/data/bars/
+OpenTerminalUI/data/cache/
+data/bars/
+
+# ==============================================================================
+# Reports & Third-party References
+# ==============================================================================
+reports/
+QuantaAlpha/

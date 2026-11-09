@@ -31,8 +31,8 @@ def test_smc_pipeline_dry_run():
 
     prompt = (
         "Execute SMC analysis workflow for symbol 'XAUUSD': "
-        "Delegate to sub-agents in order: htf_bias_agent -> structure_agent -> poi_agent -> "
-        "sizer_agent -> risk_gatekeeper. Report final results."
+        "Delegate to sub-agents in order: macro_sentiment_agent -> smc_strategy_agent -> "
+        "adversarial_risk_agent. Report final results."
     )
     message = types.Content(
         parts=[types.Part.from_text(text=prompt)],

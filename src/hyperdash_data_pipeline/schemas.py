@@ -86,7 +86,7 @@ class RejectedTraderRecord(BaseModel):
 
 
 class RawFillRecord(BaseModel):
-    """Single fill execution record from Hyperliquid L1 RPC userFills."""
+    """Single fill or completed round-trip trade record."""
 
     tid: int
     coin: str
@@ -97,6 +97,12 @@ class RawFillRecord(BaseModel):
     fee: float
     closed_pnl: float
     dir: str
+    end_time: int | None = None
+    duration_mins: float | None = None
+    avg_exit_px: float | None = None
+    gross_pnl: float | None = None
+    funding_pnl: float | None = None
+    notional: float | None = None
 
 
 class EquityPoint(BaseModel):
@@ -155,7 +161,6 @@ class EnrichedTraderRecord(BaseModel):
     funding_pnl_pct: float
     quality_tier: str
     smoothness_tier: str
-    is_algo: bool
     strategy_tag: str
 
 

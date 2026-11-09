@@ -59,6 +59,48 @@ query GetTrader($address: String!) {
       value
     }
   }
+  getTraderDetailedStatsSummary(address: $address) {
+    tradeCount
+    startDate
+    endDate
+    longestWinStreak
+    completedTradePnl {
+      pnl
+      longPnl
+      shortPnl
+      fees
+      net
+    }
+    durationStats {
+      avgDurationMinutes
+      medianDurationMinutes
+      q1DurationMinutes
+      q3DurationMinutes
+    }
+  }
+}
+"""
+
+GET_COMPLETED_TRADES_QUERY = """
+query GetTraderCompletedTrades($address: String!, $page: Int, $pageSize: Int) {
+  getTraderCompletedTrades(address: $address, page: $page, pageSize: $pageSize) {
+    tradeCount
+    trades {
+      startTime
+      endTime
+      coin
+      direction
+      durationMins
+      sz
+      avgEntryPx
+      avgExitPx
+      grossPnl
+      fundingPnl
+      totalFees
+      netPnl
+      notional
+    }
+  }
 }
 """
 
@@ -88,21 +130,40 @@ def compute_backoff_seconds(retry_attempt: int, max_backoff_sec: float = 30.0) -
     return float(min(2**exponent, max_backoff_sec))
 
 
+def extract_graphql_retry_after(payload: Any) -> float:
+    """Return retryAfter seconds if GraphQL payload contains RATE_LIMIT_EXCEEDED error."""
+    entries = payload if isinstance(payload, list) else [payload]
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        for err in entry.get("errors") or []:
+            ext = err.get("extensions") or {}
+            if ext.get("code") == "RATE_LIMIT_EXCEEDED" or "Too many" in str(err.get("message")):
+                return float(ext.get("retryAfter") or 15.0)
+    return 0.0
+
+
 async def post_json_with_backoff(
     http_client: httpx.AsyncClient,
     limiter: TokenBucketLimiter,
     url: str,
     json_payload: Any,
 ) -> Any:
-    """Send an HTTP POST request with token-bucket throttling and 429 backoff."""
-    for attempt in range(4):
+    """Send an HTTP POST request with token-bucket throttling and HTTP/GraphQL 429 backoff."""
+    for attempt in range(6):
         await limiter.acquire()
         response = await http_client.post(url, json=json_payload)
-        if response.status_code == 429 and attempt < 3:
-            await asyncio.sleep(compute_backoff_seconds(attempt))
+        if response.status_code == 429 and attempt < 5:
+            retry_after = float(response.headers.get("Retry-After") or 0.0)
+            await asyncio.sleep(max(retry_after, compute_backoff_seconds(attempt + 1)))
             continue
         response.raise_for_status()
-        return response.json()
+        parsed_body = response.json()
+        gql_wait = extract_graphql_retry_after(parsed_body)
+        if gql_wait > 0.0 and attempt < 5:
+            await asyncio.sleep(gql_wait + 1.5)
+            continue
+        return parsed_body
     raise RuntimeError(f"Exhausted rate-limit retries for {url}")
 
 
@@ -307,13 +368,69 @@ async def fetch_paginated_user_fills(
     return deduplicate_raw_fills(all_fills)
 
 
+def to_completed_fill_record(trade: dict[str, Any], tid: int) -> RawFillRecord:
+    """Map a single Hyperdash completed trade dict into a RawFillRecord."""
+    direction = str(trade.get("direction") or "")
+    side = "B" if "long" in direction.lower() else "A"
+    return RawFillRecord(
+        tid=tid,
+        coin=str(trade.get("coin") or ""),
+        side=side,
+        px=float(trade.get("avgEntryPx") or 0.0),
+        sz=float(trade.get("sz") or 0.0),
+        time=normalize_epoch_seconds(trade.get("startTime")) * 1_000,
+        fee=float(trade.get("totalFees") or 0.0),
+        closed_pnl=float(trade.get("netPnl") or 0.0),
+        dir=direction,
+        end_time=normalize_epoch_seconds(trade.get("endTime")) * 1_000,
+        duration_mins=float(trade.get("durationMins") or 0.0),
+        avg_exit_px=float(trade.get("avgExitPx") or 0.0),
+        gross_pnl=float(trade.get("grossPnl") or 0.0),
+        funding_pnl=float(trade.get("fundingPnl") or 0.0),
+        notional=float(trade.get("notional") or 0.0),
+    )
+
+
+def parse_completed_trades(
+    raw_trades_payload: list[dict[str, Any]],
+    start_tid: int = 1,
+) -> list[RawFillRecord]:
+    """Convert Hyperdash getTraderCompletedTrades entries into RawFillRecord objects."""
+    return [
+        to_completed_fill_record(trade, start_tid + offset)
+        for offset, trade in enumerate(raw_trades_payload)
+    ]
+
+
+async def fetch_paginated_completed_trades(
+    http_client: httpx.AsyncClient,
+    limiter: TokenBucketLimiter,
+    address: str,
+    max_pages: int = 5,
+) -> list[RawFillRecord]:
+    """Fetch paginated completed round-trip trades from Hyperdash GraphQL (up to 1,000 trades)."""
+    collected_trades: list[RawFillRecord] = []
+    for page_num in range(1, max_pages + 1):
+        query_vars = {"address": address, "page": page_num, "pageSize": 200}
+        gql_req = [{"operationName": "GetTraderCompletedTrades", "variables": query_vars, "query": GET_COMPLETED_TRADES_QUERY}]
+        resp = await post_json_with_backoff(http_client, limiter, HYPERDASH_GRAPHQL_URL, gql_req)
+        node = (resp[0].get("data") or {}).get("getTraderCompletedTrades") if isinstance(resp, list) and resp else None
+        if not node or not node.get("trades"):
+            break
+        batch = parse_completed_trades(node["trades"], start_tid=len(collected_trades) + 1)
+        collected_trades.extend(batch)
+        if len(batch) < 200 or len(collected_trades) >= int(node.get("tradeCount") or 0):
+            break
+    return deduplicate_raw_fills(collected_trades)
+
+
 async def fetch_wallet_bundle(
     http_client: httpx.AsyncClient,
     limiter: TokenBucketLimiter,
     address: str,
     funding_pnl: float,
 ) -> tuple[TraderProfileSnapshot, list[RawFillRecord]]:
-    """Fetch GetTrader profile, clearinghouseState, and paginated aggregated userFills."""
+    """Fetch GetTrader profile, clearinghouseState, and completed trades (with L1 fallback)."""
     graphql_payload = [
         {"operationName": "GetTrader", "variables": {"address": address}, "query": GET_TRADER_QUERY}
     ]
@@ -324,9 +441,13 @@ async def fetch_wallet_bundle(
     ch_resp = await post_json_with_backoff(
         http_client, limiter, HYPERLIQUID_INFO_URL, {"type": "clearinghouseState", "user": address}
     )
-    fills = await fetch_paginated_user_fills(http_client, limiter, address)
-    snapshot = build_profile_snapshot(address, trader_node, ch_resp, funding_pnl)
-    return snapshot, fills
+    trades = await fetch_paginated_completed_trades(http_client, limiter, address)
+    if not trades:
+        trades = await fetch_paginated_user_fills(http_client, limiter, address)
+    trade_funding_sum = sum(float(t.funding_pnl or 0.0) for t in trades if t.funding_pnl is not None)
+    resolved_funding = funding_pnl if funding_pnl != 0.0 else trade_funding_sum
+    snapshot = build_profile_snapshot(address, trader_node, ch_resp, resolved_funding)
+    return snapshot, trades
 
 
 async def ingest_single_wallet(

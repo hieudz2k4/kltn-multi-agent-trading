@@ -1,0 +1,266 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+from hashlib import sha256
+import math
+from typing import Any
+
+
+@dataclass(frozen=True)
+class DepthLevel:
+    price: float
+    quantity: int
+    orders: int
+    cumulative_qty: int
+
+
+@dataclass(frozen=True)
+class DepthSnapshot:
+    symbol: str
+    market: str
+    provider_key: str
+    as_of: datetime
+    mid_price: float
+    spread: float
+    spread_pct: float
+    tick_size: float
+    bids: tuple[DepthLevel, ...]
+    asks: tuple[DepthLevel, ...]
+    levels: int
+    total_bid_quantity: int
+    total_ask_quantity: int
+    last_price: float
+    last_qty: float
+    imbalance: float
+
+    def to_wire(self) -> dict[str, Any]:
+        return {
+            "symbol": self.symbol,
+            "market": self.market,
+            "provider_key": self.provider_key,
+            # Every snapshot from this service is generated (seeded from the symbol); say so.
+            "synthetic": True,
+            "provenance": {
+                "source": "mock",
+                "quality": "synthetic",
+                "as_of": self.as_of.isoformat(),
+                "latency_ms": None,
+                "note": "Synthetic order book — no live depth provider is connected",
+            },
+            "as_of": self.as_of.isoformat(),
+            "mid_price": self.mid_price,
+            "spread": self.spread,
+            "spread_pct": self.spread_pct,
+            "tick_size": self.tick_size,
+            "levels": self.levels,
+            "total_bid_quantity": self.total_bid_quantity,
+            "total_ask_quantity": self.total_ask_quantity,
+            "total_bid_qty": self.total_bid_quantity,
+            "total_ask_qty": self.total_ask_quantity,
+            "last_price": self.last_price,
+            "last_qty": self.last_qty,
+            "imbalance": self.imbalance,
+            "bids": [
+                {
+                    "price": level.price,
+                    "quantity": level.quantity,
+                    "size": level.quantity,
+                    "orders": level.orders,
+                    "cumulative_qty": level.cumulative_qty,
+                }
+                for level in self.bids
+            ],
+            "asks": [
+                {
+                    "price": level.price,
+                    "quantity": level.quantity,
+                    "size": level.quantity,
+                    "orders": level.orders,
+                    "cumulative_qty": level.cumulative_qty,
+                }
+                for level in self.asks
+            ],
+        }
+
+
+class OrderBookService:
+    def __init__(self, cache_ttl_seconds: int = 3) -> None:
+        self._cache_ttl_seconds = max(1, int(cache_ttl_seconds))
+        self._cache: dict[str, tuple[float, DepthSnapshot]] = {}
+        # Last real price seen per symbol/market, so stream frames stay centred on it too.
+        self._last_ref: dict[str, float] = {}
+
+    @staticmethod
+    def _normalize_symbol(symbol: str) -> str:
+        normalized = str(symbol or "").strip().upper()
+        if not normalized:
+            raise ValueError("symbol is required")
+        return normalized
+
+    @staticmethod
+    def _normalize_market(market_hint: str | None, symbol: str) -> str:
+        value = str(market_hint or "").strip().upper()
+        if value in {"IN", "NSE", "BSE"}:
+            return "IN"
+        if value in {"US", "NASDAQ", "NYSE", "AMEX"}:
+            return "US"
+        if value in {"CRYPTO", "BINANCE", "BTC", "ETH"}:
+            return "CRYPTO"
+        if symbol.endswith("-USD") or symbol.endswith("USDT") or symbol.endswith("BTC"):
+            return "CRYPTO"
+        return "US"
+
+    @staticmethod
+    def _provider_key_for_market(market: str) -> str:
+        if market == "IN":
+            return "kite"
+        if market == "CRYPTO":
+            return "binance"
+        if market == "US":
+            return "finnhub"
+        return "synthetic"
+
+    @staticmethod
+    def _seed(symbol: str, market: str, provider_key: str, levels: int) -> int:
+        digest = sha256(f"{symbol}:{market}:{provider_key}:{levels}".encode("utf-8")).hexdigest()
+        return int(digest[:16], 16)
+
+    @staticmethod
+    def _decimal_places(tick_size: float) -> int:
+        if tick_size >= 1:
+            return 0
+        if tick_size >= 0.1:
+            return 1
+        return max(2, -math.floor(math.log10(tick_size)))
+
+    def _build_snapshot(self, symbol: str, market: str, levels: int, ref_price: float | None = None) -> DepthSnapshot:
+        provider_key = self._provider_key_for_market(market)
+        seed = self._seed(symbol, market, provider_key, levels)
+
+        if market == "IN":
+            base_price = 100.0 + (seed % 75_000) / 10.0
+            tick_size = 0.05 if base_price < 1_000 else 0.10
+            spread = tick_size * (4 + seed % 3)
+        elif market == "CRYPTO":
+            base_price = 1_000.0 + (seed % 2_500_000) / 100.0
+            tick_size = 0.50 if base_price > 10_000 else 0.10
+            spread = tick_size * (12 + seed % 5)
+        else:
+            base_price = 25.0 + (seed % 18_000) / 100.0
+            tick_size = 0.01 if base_price < 25 else 0.05
+            spread = tick_size * (6 + seed % 4)
+
+        if ref_price:
+            base_price = ref_price
+            tick_size = 0.01 if base_price < 25 else (0.05 if base_price < 1_000 else 0.10)
+            if base_price < 1:
+                # Sub-dollar symbols (e.g. DOGE, SHIB): scale the tick so the book stays positive.
+                tick_size = 10 ** (math.floor(math.log10(base_price)) - 2)
+            spread = tick_size * (4 + seed % 3)
+        precision = self._decimal_places(tick_size)
+        mid_price = round(base_price, precision)
+        bid_anchor = mid_price - spread / 2.0
+        ask_anchor = mid_price + spread / 2.0
+        created_at = datetime(2026, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=seed % 500_000)
+
+        bid_levels: list[tuple[float, int, int]] = []
+        ask_levels: list[tuple[float, int, int]] = []
+        total_bid_quantity = 0
+        total_ask_quantity = 0
+
+        for index in range(levels):
+            level_no = index + 1
+            bid_price = round(bid_anchor - index * tick_size, precision)
+            ask_price = round(ask_anchor + index * tick_size, precision)
+            bid_size = 500 + ((seed >> (index % 16)) % 900) + level_no * 40
+            ask_size = 520 + ((seed >> ((index + 5) % 16)) % 920) + level_no * 42
+            bid_orders = 1 + ((seed >> ((index + 3) % 16)) % 4)
+            ask_orders = 1 + ((seed >> ((index + 7) % 16)) % 4)
+            bid_levels.append((bid_price, int(bid_size), int(bid_orders)))
+            ask_levels.append((ask_price, int(ask_size), int(ask_orders)))
+            total_bid_quantity += int(bid_size)
+            total_ask_quantity += int(ask_size)
+
+        bid_levels.sort(key=lambda row: row[0], reverse=True)
+        ask_levels.sort(key=lambda row: row[0])
+
+        running_bid = 0
+        bids: list[DepthLevel] = []
+        for price, quantity, orders in bid_levels:
+            running_bid += quantity
+            bids.append(DepthLevel(price=price, quantity=quantity, orders=orders, cumulative_qty=running_bid))
+
+        running_ask = 0
+        asks: list[DepthLevel] = []
+        for price, quantity, orders in ask_levels:
+            running_ask += quantity
+            asks.append(DepthLevel(price=price, quantity=quantity, orders=orders, cumulative_qty=running_ask))
+
+        spread_value = round(asks[0].price - bids[0].price, precision) if bids and asks else 0.0
+        spread_pct = round((spread_value / mid_price) * 100.0, 6) if mid_price > 0 else 0.0
+        last_price = round(mid_price + (((seed % 5) - 2) * tick_size * 0.5), precision)
+        last_qty = float(50 + (seed % 450))
+        total_visible = total_bid_quantity + total_ask_quantity
+        imbalance = round(
+            ((total_bid_quantity - total_ask_quantity) / total_visible) if total_visible > 0 else 0.0,
+            6,
+        )
+        return DepthSnapshot(
+            symbol=symbol,
+            market=market,
+            provider_key=provider_key,
+            as_of=created_at,
+            mid_price=mid_price,
+            spread=spread_value,
+            spread_pct=spread_pct,
+            tick_size=tick_size,
+            bids=tuple(bids),
+            asks=tuple(asks),
+            levels=levels,
+            total_bid_quantity=total_bid_quantity,
+            total_ask_quantity=total_ask_quantity,
+            last_price=last_price,
+            last_qty=last_qty,
+            imbalance=imbalance,
+        )
+
+    def get_snapshot(
+        self, symbol: str, market_hint: str | None = None, levels: int = 10, ref_price: float | None = None
+    ) -> DepthSnapshot:
+        """`ref_price`: when the caller knows the real last price, the synthetic book is
+        centred on it instead of the seeded base price, so the ladder agrees with the tape."""
+        normalized_symbol = self._normalize_symbol(symbol)
+        normalized_market = self._normalize_market(market_hint, normalized_symbol)
+        safe_levels = max(1, min(int(levels), 40))
+        ref = float(ref_price) if ref_price is not None and float(ref_price) > 0 else None
+        if ref is not None:
+            self._last_ref[f"{normalized_symbol}:{normalized_market}"] = ref
+        cache_key = f"{normalized_symbol}:{normalized_market}:{safe_levels}:{round(ref, 4) if ref else '-'}"
+        now = datetime.now(timezone.utc).timestamp()
+        cached = self._cache.get(cache_key)
+        if cached and cached[0] > now:
+            return cached[1]
+
+        snapshot = self._build_snapshot(normalized_symbol, normalized_market, safe_levels, ref_price=ref)
+        self._cache[cache_key] = (now + self._cache_ttl_seconds, snapshot)
+        return snapshot
+
+    def stream_message(
+        self, symbol: str, market_hint: str | None = None, levels: int = 10, ref_price: float | None = None
+    ) -> dict[str, Any]:
+        if ref_price is None:
+            # Keep stream frames on the same real price a REST caller already anchored this book to.
+            sym = self._normalize_symbol(symbol)
+            ref_price = self._last_ref.get(f"{sym}:{self._normalize_market(market_hint, sym)}")
+        snapshot = self.get_snapshot(symbol, market_hint=market_hint, levels=levels, ref_price=ref_price)
+        return {
+            "type": "depth",
+            "symbol": snapshot.symbol,
+            "market": snapshot.market,
+            "provider_key": snapshot.provider_key,
+            "snapshot": snapshot.to_wire(),
+        }
+
+
+service = OrderBookService()

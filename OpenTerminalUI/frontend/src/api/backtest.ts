@@ -1,0 +1,79 @@
+import { api } from "./base";
+import type {
+  BacktestPayload,
+  BacktestResponse,
+  BacktestJobSubmitPayload,
+  BacktestJobStatus,
+  BacktestJobResult,
+  InsightData,
+} from "./types";
+
+export async function explainBacktest(
+  runId: string,
+  context?: Record<string, unknown>,
+): Promise<InsightData> {
+  const { data } = await api.post<InsightData>("/ai/backtest-explain", { strategy: runId, metrics: context ?? {} });
+  return data;
+}
+
+export async function fetchRiskInsights(
+  runId: string,
+  context?: Record<string, unknown>,
+): Promise<InsightData> {
+  const { data } = await api.post<InsightData>("/ai/risk-insights", { scope: runId, metrics: context ?? {} });
+  return data;
+}
+
+export async function runBacktest(payload: BacktestPayload): Promise<BacktestResponse> {
+  const { data } = await api.post<BacktestResponse>("/backtest/run", payload);
+  return data;
+}
+
+// Async backtest jobs live at /api/backtests (submit) and /api/backtests/{run_id}/status|result.
+// The old /v1/backtest/jobs paths never existed on the backend (405 on every Run click).
+export async function submitBacktestJob(payload: BacktestJobSubmitPayload): Promise<BacktestJobStatus> {
+  const { data } = await api.post<BacktestJobStatus>("/backtests", payload);
+  return data;
+}
+
+export async function fetchBacktestJobStatus(runId: string): Promise<BacktestJobStatus> {
+  const { data } = await api.get<BacktestJobStatus>(`/backtests/${encodeURIComponent(runId)}/status`);
+  return data;
+}
+
+export async function fetchBacktestJobResult(runId: string): Promise<BacktestJobResult> {
+  const { data } = await api.get<BacktestJobResult>(`/backtests/${encodeURIComponent(runId)}/result`);
+  return data;
+}
+
+export async function submitBacktestV1(payload: BacktestJobSubmitPayload): Promise<BacktestJobStatus> {
+  const { data } = await api.post<BacktestJobStatus>("/v1/backtest/submit", payload);
+  return data;
+}
+
+export async function fetchBacktestV1Status(runId: string): Promise<BacktestJobStatus> {
+  const { data } = await api.get<BacktestJobStatus>(`/v1/backtest/status/${encodeURIComponent(runId)}`);
+  return data;
+}
+
+export async function fetchBacktestV1Result(runId: string): Promise<BacktestJobResult> {
+  const { data } = await api.get<BacktestJobResult>(`/v1/backtest/result/${encodeURIComponent(runId)}`);
+  return data;
+}
+
+export async function fetchBacktestV1Presets(): Promise<Array<Record<string, unknown>>> {
+  const { data } = await api.get<{ items: Array<Record<string, unknown>> }>("/v1/backtest/presets");
+  return Array.isArray(data?.items) ? data.items : [];
+}
+
+export async function deployBacktestToPaper(payload: {
+  name: string;
+  initial_capital: number;
+  symbol: string;
+  market: string;
+  strategy: string;
+  context?: Record<string, unknown>;
+}): Promise<{ portfolio_id: string; status: string }> {
+  const { data } = await api.post<{ portfolio_id: string; status: string }>("/paper/deploy-strategy", payload);
+  return data;
+}

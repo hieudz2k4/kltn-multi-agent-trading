@@ -4,7 +4,7 @@
   "size_cohort": "SMALL",
   "perps_equity": 171089.46736856032,
   "net_pnl": 5205300.88237,
-  "funding_pnl": 0.0,
+  "funding_pnl": -28387.57,
   "total_trades": 527,
   "trades_30d": 7,
   "winrate_30d": 71.42857142857143,

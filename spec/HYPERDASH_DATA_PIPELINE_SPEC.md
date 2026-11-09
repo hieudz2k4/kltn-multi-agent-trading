@@ -18,7 +18,6 @@ Pipeline này phục vụ mục tiêu thu thập, làm sạch và gắn nhãn t�
 3. **Enrichment, Quality Gate & Labeling**: Tính toán và kiểm định bộ 7 chỉ số định lượng cốt lõi (`Max Drawdown 30D`, `Sortino 30D`, `Sharpe All-Time/90D`, `Profit Factor`, `Win Rate`, `Equity Curve R²` & `K-Ratio`, `Effective Leverage`), kèm Calmar Ratio và gắn nhãn phân loại:
    - `quality_tier`: Phân hạng chất lượng dữ liệu (`GOLD`, `PASS`, `REJECT`) theo ngưỡng lọc chuẩn tại [quantitative_trading_metrics_report.md](file:///Users/hieudz/Desktop/workspace/kltn-multi-agent-trading/reports/quantitative_trading_metrics_report.md).
    - `smoothness_tier`: Phân bậc độ mượt đường cong vốn theo `R²` và chiều dốc `β`.
-   - `is_algo`: Tự động nhận diện trader sử dụng thuật toán/bot hay discretionary trader.
    - `strategy_tag`: Phân loại chiến lược (`FUNDING_CARRY`, `GRID_MARTINGALE`, `BREAKOUT_MOMENTUM`, `TREND_DISCRETIONARY`).
 
 ### 1.2. Non-goals
@@ -393,7 +392,6 @@ Lưu trữ dạng file nén Parquet theo từng địa chỉ ví: `data/raw_fill
 | `funding_pnl_pct` | `float32` | % PnL đến từ `fundingPnl` so với tổng `netPnl` — đặc trưng phân loại `FUNDING_CARRY` |
 | `quality_tier` | `string` | Phân hạng chất lượng: `GOLD` (Dataset Vàng), `PASS` (Chấp nhận), `REJECT` (Loại bỏ) |
 | `smoothness_tier` | `string` | Phân bậc đường vốn: `SMOOTH_LINEAR` (`R²≥0.90` & `β>0`), `MODERATE` (`0.75≤R²<0.90`), `CHOPPY` (`R²<0.75` hoặc `β≤0`) |
-| `is_algo` | `bool` | Cờ nhận diện giao dịch bằng thuật toán / bot |
 | `strategy_tag` | `string` | Nhãn chiến lược (`FUNDING_CARRY`, `GRID_MARTINGALE`, `BREAKOUT_MOMENTUM`, `TREND_DISCRETIONARY`) |
 
 ---
@@ -438,23 +436,7 @@ Lưu trữ dạng file nén Parquet theo từng địa chỉ ví: `data/raw_fill
 
 ---
 
-### 5.2. Nhận diện Thuật toán (`is_algo`)
-Một trader được phân loại là `is_algo = True` khi thỏa mãn ít nhất **2 trong 3** tiêu chuẩn sau:
-
-1. **Activity Density**: Trong chuỗi 14 ngày hoạt động, ≥ 70% các window 6 giờ liên tiếp phải có ít nhất 1 fill. Phản ánh hoạt động liên tục 24/7 của bot mà không bị ảnh hưởng bởi maintenance gap ngắn.
-
-2. **Periodic Order Clustering (CV Rule)**: Hệ số biến thiên của khoảng thời gian giữa các lệnh thỏa mãn:
-   ```
-   CV(Δt) = σ(Δt) / μ(Δt) < 0.20
-   ```
-   hoặc ≥ 60% các khoảng `Δt` rơi vào bội số của các chu kỳ cố định `{60s, 300s, 900s, 3600s}` (Round Interval Clustering).
-   > **Lý do thay `σ_Δt < 5s`**: Công thức cũ chỉ bắt được HFT bot. `CV(Δt) < 0.20` bắt được toàn bộ bot DCA, Grid, Rebalance có chu kỳ 15m–4h với phân bố lệnh đồng đều nhưng `σ` lớn.
-
-3. **High Frequency Activity**: Tần suất giao dịch bình quân vượt quá 50 lệnh/ngày trong 14 ngày quan sát.
-
----
-
-### 5.3. Phân loại Chiến lược (`strategy_tag`)
+### 5.2. Phân loại Chiến lược (`strategy_tag`)
 - **`FUNDING_CARRY`**:
   - Tỷ lệ giữ lệnh vắt qua mốc thanh toán funding (1 giờ hoặc 8 giờ) > 85%.
   - PnL đến chủ yếu từ `funding_fee` hoặc Delta rủi ro gần bằng 0 (Hedging).

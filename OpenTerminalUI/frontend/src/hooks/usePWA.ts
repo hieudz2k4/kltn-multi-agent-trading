@@ -1,0 +1,128 @@
+import { useEffect, useRef, useState } from "react";
+
+export type UsePWAMountedPrompt = {
+  prompt: () => void;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
+
+export type UsePWAState = {
+  isInstalled: boolean;
+  isReady: boolean;
+  showInstallPrompt: boolean;
+  installPrompt: UsePWAMountedPrompt | null;
+  dismissInstallPrompt: () => void;
+};
+
+function useSWRegistration() {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) {
+      setIsReady(true);
+      return;
+    }
+
+    if (import.meta.env.DEV) {
+      // Previous production previews may have left our worker on this origin.
+      // Unregister only this app's script; other apps may share the origin.
+      void navigator.serviceWorker.getRegistrations().then(async (registrations) => {
+        await Promise.all(registrations.filter((registration) =>
+          [registration.active, registration.waiting, registration.installing].some((worker) => {
+            if (!worker) return false;
+            const script = new URL(worker.scriptURL);
+            return script.origin === window.location.origin && script.pathname === "/sw.js";
+          }),
+        ).map((registration) => registration.unregister()));
+        if ("caches" in window) {
+          const keys = await window.caches.keys();
+          await Promise.all(keys.filter((key) => key.startsWith("otui-static-")).map((key) => window.caches.delete(key)));
+        }
+      }).catch(() => {}).finally(() => setIsReady(true));
+      return;
+    }
+
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) => {
+        if (registration.active) {
+          setIsReady(true);
+          return;
+        }
+        // Capture the worker: registration.installing is null once it leaves the installing state.
+        const worker = registration.installing ?? registration.waiting;
+        if (worker) {
+          worker.addEventListener("statechange", () => {
+            if (worker.state === "activated") {
+              setIsReady(true);
+            }
+          });
+        }
+      })
+      .catch(() => {
+        setIsReady(true);
+      });
+  }, []);
+
+  return isReady;
+}
+
+export function usePWA(): UsePWAState {
+  const isReady = useSWRegistration();
+  const promptStateRef = useRef<{
+    promptFn: () => void;
+    dismissFn: () => void;
+  } | null>(null);
+  const [, forceRender] = useState(0);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  const triggerRender = () => forceRender((n) => n + 1);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      const promptEvt = e as unknown as { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
+      promptStateRef.current = {
+        promptFn: () => {
+          promptEvt.prompt();
+          promptEvt.userChoice.then((choice) => {
+            if (choice.outcome === "accepted") {
+              setIsInstalled(true);
+            }
+            promptStateRef.current = null;
+            triggerRender();
+          });
+        },
+        dismissFn: () => {
+          promptStateRef.current = null;
+          triggerRender();
+        },
+      };
+      triggerRender();
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(display-mode: standalone)");
+    const checkStandalone = () => setIsInstalled(mediaQuery.matches);
+    checkStandalone();
+    const listener = () => checkStandalone();
+    mediaQuery.addEventListener("change", listener);
+    return () => mediaQuery.removeEventListener("change", listener);
+  }, []);
+
+  const promptRef = promptStateRef.current;
+
+  const installPrompt: UsePWAMountedPrompt | null = promptRef
+    ? { prompt: promptRef.promptFn, userChoice: Promise.resolve({ outcome: "dismissed" }) }
+    : null;
+
+  return {
+    isInstalled,
+    isReady,
+    showInstallPrompt: !isInstalled && !!promptRef,
+    installPrompt,
+    dismissInstallPrompt: promptRef?.dismissFn ?? (() => {}),
+  };
+}

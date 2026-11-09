@@ -1,0 +1,102 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: openterminalui:latest
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      OPENTERMINALUI_ENV: "${OPENTERMINALUI_ENV:-development}"
+      FMP_API_KEY: "${FMP_API_KEY:-}"
+      FINNHUB_API_KEY: "${FINNHUB_API_KEY:-}"
+      JWT_SECRET_KEY: "${JWT_SECRET_KEY:-}"
+      CACHE_SIGNING_KEY: "${CACHE_SIGNING_KEY:-}"
+      BOOTSTRAP_ADMIN_EMAIL: "${BOOTSTRAP_ADMIN_EMAIL:-}"
+      BOOTSTRAP_ADMIN_PASSWORD: "${BOOTSTRAP_ADMIN_PASSWORD:-}"
+      DATABASE_URL: "${DATABASE_URL:-sqlite+aiosqlite:////data/openterminal.db}"
+      KITE_API_KEY: "${KITE_API_KEY:-}"
+      KITE_API_SECRET: "${KITE_API_SECRET:-}"
+      KITE_ACCESS_TOKEN: "${KITE_ACCESS_TOKEN:-}"
+      # If REDIS_PASSWORD is set, use: redis://:password@redis:6379/0
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379/0}"
+      OPENTERMINALUI_PREFETCH_ENABLED: "${OPENTERMINALUI_PREFETCH_ENABLED:-${OPENSCREENS_PREFETCH_ENABLED:-0}}"
+      OPENTERMINALUI_SQLITE_URL: "${OPENTERMINALUI_SQLITE_URL:-${OPENSCREENS_SQLITE_URL:-sqlite:////data/openterminalui.db}}"
+      OPENTERMINALUI_CORS_ORIGINS: "${OPENTERMINALUI_CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}"
+      LM_STUDIO_BASE_URL: "${LM_STUDIO_BASE_URL:-http://host.docker.internal:1234/v1}"
+      LM_STUDIO_MODEL: "${LM_STUDIO_MODEL:-google/gemma-4-26b-a4b}"
+      LM_STUDIO_ENABLED: "${LM_STUDIO_ENABLED:-true}"
+      OPENROUTER_API_KEY: "${OPENROUTER_API_KEY:-}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      OPENROUTER_BASE_URL: "${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}"
+      AGENT_PROVIDER: "${AGENT_PROVIDER:-openrouter}"
+      AGENT_MODEL: "${AGENT_MODEL:-openai/gpt-oss-20b:free}"
+      AGENT_DISABLE_MODEL_FALLBACKS: "${AGENT_DISABLE_MODEL_FALLBACKS:-false}"
+      AGENT_MODELS_TOOL_USE: "${AGENT_MODELS_TOOL_USE:-meta-llama/llama-3.3-70b-instruct:free,qwen/qwen3-coder:free,openai/gpt-oss-20b:free}"
+      AGENT_MODELS_REASONING: "${AGENT_MODELS_REASONING:-deepseek/deepseek-r1:free,qwen/qwq-32b:free,openai/gpt-oss-120b:free,openai/gpt-oss-20b:free}"
+      AGENT_MODELS_GENERAL: "${AGENT_MODELS_GENERAL:-openai/gpt-oss-20b:free,google/gemini-2.0-flash-exp:free}"
+      AGENT_FALLBACK_MODELS: "${AGENT_FALLBACK_MODELS:-openai/gpt-oss-20b:free,qwen/qwen3-coder:free,meta-llama/llama-3.3-70b-instruct:free}"
+      AGENT_DEBATE_ENABLED: "${AGENT_DEBATE_ENABLED:-true}"
+      AGENT_STRATEGY_LOOP_ENABLED: "${AGENT_STRATEGY_LOOP_ENABLED:-true}"
+    depends_on:
+      - redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # SEC-FIX: appuser (created in Dockerfile) owns /app; the named volume is
+      # mounted at /data. Docker initialises the volume as root, so we rely on the
+      # Dockerfile chown to cover /app/data if SQLite lives there. If the volume
+      # mount point itself needs ownership, run once:
+      #   docker compose run --rm --user root backend chown -R appuser:appgroup /data
+      - openterminalui_data:/data
+    develop:
+      watch:
+        - action: rebuild
+          path: ./Dockerfile
+        - action: rebuild
+          path: ./backend
+        - action: rebuild
+          path: ./frontend
+        - action: rebuild
+          path: ./plugins
+        - action: rebuild
+          path: ./scripts
+        - action: rebuild
+          path: ./data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    # SEC-FIX: Do NOT expose Redis port to the host/internet.
+    # Internal services reach Redis via the Docker network using the service name.
+    # If local debugging is needed, use: docker compose exec redis redis-cli
+    command: >
+      sh -c "
+        if [ -n \"$$REDIS_PASSWORD\" ]; then
+          redis-server --requirepass \"$$REDIS_PASSWORD\"
+        else
+          redis-server
+        fi
+      "
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-openterminalui}"
+      POSTGRES_USER: "${POSTGRES_USER:-openterminalui}"
+      # SEC-FIX: Password must be set via POSTGRES_PASSWORD env var in .env
+      # Do NOT use the default fallback in production.
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}"
+    # SEC-FIX: Do NOT expose Postgres port to the host/internet.
+    # Connect via: docker compose exec postgres psql -U openterminalui
+    volumes:
+      - openterminalui_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  openterminalui_data:
+  openterminalui_postgres_data:

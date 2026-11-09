@@ -68,7 +68,7 @@ Return structured data strictly conforming to the `RiskVerdict` schema:
 
 def create_risk_gatekeeper(model_name: str | None = None) -> Agent:
     """Create the Google ADK Adversarial Risk Gatekeeper Agent."""
-    model = model_name or os.getenv("SMC_LLM_MODEL", "gemini-2.5-flash")
+    model = model_name or os.getenv("SMC_LLM_MODEL", "gemini-4-argon")
     return Agent(
         name="risk_gatekeeper",
         model=model,

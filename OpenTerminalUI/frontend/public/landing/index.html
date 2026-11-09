@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenTerminalUI — One terminal. Every market. Self-hosted.</title>
+<meta name="description" content="OpenTerminalUI is a self-hosted, open-source financial terminal: live market data with provenance, charting, F&O, portfolio and risk, backtesting, and an AI research agent with 45 MCP tools.">
+<meta property="og:title" content="OpenTerminalUI — One terminal. Every market. Self-hosted.">
+<meta property="og:description" content="Open-source financial terminal you run yourself. Equities, F&O, crypto, macro, backtests and an AI agent — every number labelled with where it came from.">
+<meta property="og:image" content="https://hitheshkaranth.github.io/OpenTerminalUI/assets/shots/home.webp">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<div class="announce">
+  <span class="pill">NEW</span>
+  <span><b>v0.9.0</b> — research dossiers, evidence review, scheduled screens, earnings comparisons and frozen-data experiment charts.</span>
+  <a href="https://github.com/Hitheshkaranth/OpenTerminalUI/releases/latest">Release notes →</a>
+</div>
+
+<nav class="top" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="OpenTerminalUI home"><img src="assets/logo-ink.png" alt="OpenTerminalUI" width="92" height="28"></a>
+    <div class="links">
+      <a href="#products">Product</a>
+      <a href="#workflows">Workflows</a>
+      <a href="#agent">AI &amp; MCP</a>
+      <a href="#deploy">Deploy</a>
+      <a href="Docs.dc.html">Docs</a>
+      <a href="Roadmap.dc.html">Roadmap</a>
+    </div>
+    <div class="nav-r">
+      <a class="btn sm" href="https://github.com/Hitheshkaranth/OpenTerminalUI" aria-label="GitHub repository">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span class="star" id="stars">★ GitHub</span>
+      </a>
+      <a class="btn sm primary" data-launch href="#deploy">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <canvas id="mesh" aria-hidden="true"></canvas>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow"><span class="tag">MIT</span> Open source · self-hosted · <span class="mono">v0.9.0</span></div>
+      <h1>One terminal.<br><span class="l2">Every market,</span><br><span class="s">self-hosted.</span></h1>
+      <p class="lede">A Bloomberg-style financial terminal you run on your own machine — equities, F&amp;O, crypto, macro, portfolio risk, backtests and an AI research agent, with every number labelled with where it came from.</p>
+      <p class="fine">NSE, BSE, NYSE and NASDAQ plus crypto, forex, commodities, bonds, ETFs and mutual funds. Starts on free data with no API keys; add Kite, Finnhub or FMP when you want live feeds.</p>
+      <div class="cta-row">
+        <a class="btn primary" data-launch href="#deploy">Get started →</a>
+        <a class="btn" href="#demo">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
+          Tour the screens</a>
+        <a class="btn" href="https://github.com/Hitheshkaranth/OpenTerminalUI">★ Star on GitHub</a>
+      </div>
+      <div class="micro">// one command · no key to start · SQLite by default · amd64 + arm64</div>
+    </div>
+
+    <div>
+      <div class="dash" id="dash" aria-label="Animated preview of the Mission Control dashboard">
+        <div class="rail" aria-hidden="true"><i class="lg"></i><span class="on">HM</span><span>MK</span><span>WL</span><span>SH</span><span>SC</span><span>WS</span><span>PF</span><span>AL</span><span>FO</span></div>
+        <div class="main">
+          <div class="go"><span class="in">⌕ Type ticker, command, or search… (Ctrl+G)</span><span class="btn-go">GO</span></div>
+          <div class="tape"><div class="tr" id="tape"></div></div>
+          <div class="body">
+            <div class="hd"><div><div class="t1">MISSION CONTROL</div><div class="t2">TRADING DESK</div></div><div class="clk" id="clk"></div></div>
+            <div class="tiles" id="tiles"></div>
+            <div class="row2">
+              <div class="panel"><div class="ph"><span><b>RELIANCE</b> · NSE · 1m</span><span class="chip">LIVE · KITE</span></div><canvas id="spark" aria-hidden="true"></canvas></div>
+              <div class="panel"><div class="ph"><b>Watchlist</b><span class="chip dl">MIXED</span></div><div class="wl" id="wl"></div></div>
+            </div>
+          </div>
+          <div class="status"><span>NSE: <span id="mk">OPEN</span></span><span class="pv"><i></i>KITE<i></i>FINNHUB<i class="w"></i>YAHOO<i></i>FMP<i class="r"></i>NSE</span></div>
+        </div>
+      </div>
+      <div class="dash-cap"><span class="ld">Mission Control · live preview</span><span>simulated ticks</span></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><b data-count="77">77</b><span>Screens, one shell</span></div>
+      <div class="stat"><b data-count="70" data-suffix="+">70+</b><span>Technical indicators</span></div>
+      <div class="stat"><b data-count="45">45</b><span>MCP tools for agents</span></div>
+      <div class="stat"><b data-count="1762" data-sep="1">1,762</b><span>Automated tests</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 01 LIVE TOUR ============ -->
+<section id="demo" style="padding-top:64px">
+  <div class="wrap">
+    <div class="label"><b>01</b> Screen tour</div>
+    <div class="demo rv">
+      <div class="demo-bar" role="tablist" id="d-tabs"><span class="dots"><i></i><i></i><i></i></span></div>
+      <div class="demo-grid">
+        <div class="demo-side">
+          <div class="kick" id="d-kick"></div>
+          <h3 id="d-title"></h3>
+          <p id="d-desc"></p>
+          <ul id="d-list"></ul>
+          <div class="route" id="d-route"></div>
+        </div>
+        <div class="demo-shot"><img id="d-img" alt="" width="1680" height="1050"></div>
+      </div>
+      <div class="demo-foot"><span id="d-count"></span><span>captured from the real app · seeded data</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-label="Recently shipped">
+  <span class="fixed">● RECENTLY SHIPPED</span>
+  <div class="track" id="ship"></div>
+</div>
+
+<div class="providers wrap">
+  <div class="cap">Works with the data you already have · provider waterfall with automatic failover</div>
+  <div class="chips">
+    <span class="chip"><i class="d" style="background:var(--live)"></i>Zerodha Kite <small>NSE/BSE live</small></span>
+    <span class="chip"><i class="d" style="background:var(--live)"></i>Finnhub <small>US ticks</small></span>
+    <span class="chip"><i class="d" style="background:var(--live)"></i>Alpaca</span>
+    <span class="chip"><i class="d" style="background:var(--cached)"></i>FMP <small>fundamentals</small></span>
+    <span class="chip"><i class="d" style="background:var(--delayed)"></i>Yahoo Finance <small>no key</small></span>
+    <span class="chip"><i class="d" style="background:var(--delayed)"></i>NSE <small>F&amp;O, actions</small></span>
+    <span class="chip"><i class="d" style="background:var(--cached)"></i>FRED</span>
+    <span class="chip"><i class="d" style="background:var(--cached)"></i>FXMacroData <small>no key</small></span>
+    <span class="chip"><i class="d" style="background:var(--synthetic)"></i>OpenRouter · LM Studio</span>
+    <span class="chip"><i class="d" style="background:var(--ink)"></i>Claude via MCP</span>
+  </div>
+</div>
+
+<!-- ============ 02 MANIFESTO ============ -->
+<section class="dark manifesto">
+  <div class="wrap">
+    <div class="label"><b>02</b> Manifesto</div>
+    <h2 class="rv">Terminals were built for institutions.<br><del>So everyone else trades on screenshots.</del><br><span class="hl">So we built one you can own.</span></h2>
+    <div class="man-grid">
+      <div class="beliefs rv">
+        <div class="kick">// what we believe</div>
+        <p><strong>A number without a source is a rumour.</strong> Every snapshot says live, delayed, cached or synthetic — and which provider served it.</p>
+        <p><strong>Blank beats invented.</strong> If a provider can't fill a metric, the cell says why instead of showing a plausible-looking guess.</p>
+        <p><strong>Your data stays on your machine.</strong> Self-hosted, MIT, local LLMs welcome. No telemetry, no seat licence.</p>
+        <p><strong>Analysis should end in action.</strong> Alert → paper order, screen → backtest, idea → out-of-sample verdict — in one shell.</p>
+      </div>
+      <div class="log rv" id="log" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 PRODUCTS ============ -->
+<section id="products">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="label"><b>03</b> Product · 8 desks</div>
+        <h2>Every desk<br><em class="s">a trader needs.</em></h2>
+      </div>
+      <div class="aside-note">// one shell, one symbol context<br>// Ctrl+G to jump anywhere</div>
+    </div>
+    <div class="cards">
+      <a class="card feat rv" href="#demo" data-tab="hub">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><rect x="20" y="14" width="200" height="82" rx="8" fill="#fff" stroke="#d6d5cd"/><rect x="32" y="26" width="70" height="8" rx="3" fill="#0b0e14"/><rect x="32" y="40" width="44" height="6" rx="3" fill="#d6d5cd"/><rect x="150" y="25" width="58" height="14" rx="4" fill="#dcfce7"/><text x="179" y="35" font-family="monospace" font-size="7.5" fill="#166534" text-anchor="middle">LIVE · KITE</text><path d="M32 84 L58 72 L80 76 L104 60 L128 66 L152 52 L176 56 L208 44" stroke="#9aa0ab" fill="none" stroke-width="1.5"/><path d="M152 52 L176 56 L208 44" stroke="#f08a00" stroke-width="2" fill="none"/><circle cx="208" cy="44" r="3" fill="#f08a00"/></svg></div>
+        <div class="body"><div class="ttl"><h3>Security Hub</h3><span class="badge">0.8 · PROVENANCE</span></div><span class="path">/equity/security/RELIANCE</span>
+        <p>One page per symbol, across US and Indian markets.</p>
+        <ul><li>8 tabs: financials to ESG</li><li>Provenance chip on every quote</li><li>AI catalysts &amp; conviction</li></ul></div>
+      </a>
+      <a class="card rv" href="#demo" data-tab="charts">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><g fill="#fff" stroke="#d6d5cd"><rect x="20" y="10" width="96" height="42" rx="5"/><rect x="124" y="10" width="96" height="42" rx="5"/><rect x="20" y="58" width="96" height="42" rx="5"/><rect x="124" y="58" width="96" height="42" rx="5"/></g><path d="M28 42 L48 30 L64 36 L84 22 L108 28" stroke="#9aa0ab" fill="none" stroke-width="1.5"/><path d="M132 40 L152 44 L170 26 L190 32 L212 18" stroke="#f08a00" stroke-width="1.8" fill="none"/><path d="M28 90 L50 80 L70 86 L90 70 L108 74" stroke="#9aa0ab" fill="none" stroke-width="1.5"/><path d="M132 88 L150 76 L170 82 L192 66 L212 72" stroke="#9aa0ab" fill="none" stroke-width="1.5"/><line x1="92" y1="10" x2="92" y2="100" stroke="#f08a00" stroke-dasharray="3 3"/><line x1="196" y1="10" x2="196" y2="100" stroke="#f08a00" stroke-dasharray="3 3"/></svg></div>
+        <div class="body"><div class="ttl"><h3>Chart Workstation</h3></div><span class="path">/equity/chart-workstation</span>
+        <p>Up to nine linked panels with synced crosshairs.</p>
+        <ul><li>70+ indicators, replay mode</li><li>Renko, Kagi, P&amp;F</li><li>Volume profile, drawings</li></ul></div>
+      </a>
+      <a class="card rv" href="#demo" data-tab="screener">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><g font-family="monospace" font-size="8" fill="#6b7280"><text x="24" y="22">SYMBOL</text><text x="92" y="22">SCORE</text></g><g fill="#fff" stroke="#e4e3dc"><rect x="20" y="28" width="200" height="13" rx="3"/><rect x="20" y="44" width="200" height="13" rx="3"/><rect x="20" y="60" width="200" height="13" rx="3"/><rect x="20" y="76" width="200" height="13" rx="3"/><rect x="20" y="92" width="200" height="13" rx="3"/></g><g fill="#0b0e14"><rect x="26" y="32" width="34" height="5" rx="2"/><rect x="26" y="48" width="31" height="5" rx="2"/><rect x="26" y="64" width="28" height="5" rx="2"/><rect x="26" y="80" width="25" height="5" rx="2"/><rect x="26" y="96" width="22" height="5" rx="2"/></g><rect x="92" y="32" width="110" height="5" rx="2" fill="#f08a00"/><rect x="92" y="48" width="92" height="5" rx="2" fill="#c9c8bf"/><rect x="92" y="64" width="74" height="5" rx="2" fill="#c9c8bf"/><rect x="92" y="80" width="56" height="5" rx="2" fill="#c9c8bf"/><rect x="92" y="96" width="38" height="5" rx="2" fill="#c9c8bf"/></svg></div>
+        <div class="body"><div class="ttl"><h3>Screener &amp; Factors</h3></div><span class="path">/equity/screener</span>
+        <p>Query builder, formula engine and factor ranks.</p>
+        <ul><li>Value · Momentum · Quality</li><li>"Why ranked" explanations</li><li>15+ visualisations</li></ul></div>
+      </a>
+      <a class="card rv" href="#demo" data-tab="fno">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><line x1="20" y1="92" x2="220" y2="92" stroke="#d6d5cd"/><line x1="120" y1="12" x2="120" y2="96" stroke="#d6d5cd" stroke-dasharray="3 3"/><path d="M26 30 Q70 70 120 78 Q170 70 214 26" stroke="#f08a00" stroke-width="2" fill="none"/><rect x="30" y="82" width="10" height="10" rx="2" fill="#d6d5cd"/><rect x="50" y="76" width="10" height="16" rx="2" fill="#d6d5cd"/><rect x="70" y="66" width="10" height="26" rx="2" fill="#d6d5cd"/><rect x="90" y="52" width="10" height="40" rx="2" fill="#d6d5cd"/><rect x="110" y="40" width="10" height="52" rx="2" fill="#d6d5cd"/><rect x="130" y="52" width="10" height="40" rx="2" fill="#d6d5cd"/><rect x="150" y="64" width="10" height="28" rx="2" fill="#d6d5cd"/><rect x="170" y="74" width="10" height="18" rx="2" fill="#d6d5cd"/><rect x="190" y="82" width="10" height="10" rx="2" fill="#d6d5cd"/><rect x="210" y="86" width="10" height="6" rx="2" fill="#d6d5cd"/><text x="124" y="20" font-family="monospace" font-size="8" fill="#6b7280">ATM</text></svg></div>
+        <div class="body"><div class="ttl"><h3>Futures &amp; Options</h3></div><span class="path">/fno</span>
+        <p>Chains, Greeks, OI and flow for NSE and US.</p>
+        <ul><li>Live Greeks &amp; IV rank</li><li>Multi-leg strategy builder</li><li>PCR, OI build-up, expiry</li></ul></div>
+      </a>
+      <a class="card rv" href="#demo" data-tab="portfolio">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><circle cx="70" cy="55" r="34" fill="none" stroke="#e4e3dc" stroke-width="14"/><circle cx="70" cy="55" r="34" fill="none" stroke="#f08a00" stroke-width="14" stroke-dasharray="85 214" transform="rotate(-90 70 55)"/><circle cx="70" cy="55" r="34" fill="none" stroke="#0b0e14" stroke-width="14" stroke-dasharray="55 214" stroke-dashoffset="-85" transform="rotate(-90 70 55)"/><circle cx="70" cy="55" r="34" fill="none" stroke="#9aa0ab" stroke-width="14" stroke-dasharray="40 214" stroke-dashoffset="-140" transform="rotate(-90 70 55)"/><g font-family="monospace" font-size="8" fill="#3b414d"><text x="128" y="36">VaR 95   −2.1%</text><text x="128" y="54">CVaR     −3.4%</text><text x="128" y="72">Beta      0.92</text></g></svg></div>
+        <div class="body"><div class="ttl"><h3>Portfolio &amp; Risk</h3><span class="badge">0.8 · IMPORT</span></div><span class="path">/equity/portfolio</span>
+        <p>Holdings-first, with broker and CSV import.</p>
+        <ul><li>Kite, Zerodha, Groww CSV</li><li>VaR, CVaR, stress tests</li><li>Paper trading &amp; journal</li></ul></div>
+      </a>
+      <a class="card rv" href="#demo" data-tab="backtest">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><path d="M20 70 L44 64 L60 68 L82 52 L100 56 L120 40 L140 46 L160 30 L184 34 L220 18" stroke="#f08a00" stroke-width="2" fill="none"/><path d="M20 70 L44 64 L60 68 L82 52 L100 56 L120 40 L140 46 L160 30 L184 34 L220 18 L220 70 Z" fill="#f08a00" opacity=".08"/><path d="M20 82 L60 86 L100 92 L140 88 L184 96 L220 86" stroke="#9aa0ab" fill="none" stroke-width="1.5"/><line x1="20" y1="80" x2="220" y2="80" stroke="#e4e3dc"/><g font-family="monospace" font-size="7.5" fill="#6b7280"><text x="22" y="104">drawdown</text><text x="170" y="14">equity</text></g></svg></div>
+        <div class="body"><div class="ttl"><h3>Backtest &amp; Model Lab</h3></div><span class="path">/backtesting</span>
+        <p>From template to walk-forward in one flow.</p>
+        <ul><li>16+ strategy templates</li><li>Monte Carlo robustness</li><li>Pair trading, Portfolio Lab</li></ul></div>
+      </a>
+      <a class="card rv" href="#agent" data-tab="agent">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><rect x="20" y="14" width="130" height="22" rx="8" fill="#fff" stroke="#d6d5cd"/><rect x="30" y="22" width="90" height="6" rx="3" fill="#c9c8bf"/><rect x="90" y="44" width="130" height="22" rx="8" fill="#0b0e14"/><rect x="100" y="52" width="70" height="6" rx="3" fill="#6b7385"/><g font-family="monospace" font-size="8"><rect x="20" y="76" width="54" height="20" rx="6" fill="#dcfce7"/><text x="47" y="89" fill="#166534" text-anchor="middle">BULL</text><rect x="82" y="76" width="54" height="20" rx="6" fill="#fee2e2"/><text x="109" y="89" fill="#991b1b" text-anchor="middle">BEAR</text><rect x="144" y="76" width="76" height="20" rx="6" fill="#f08a00"/><text x="182" y="89" fill="#1a1000" text-anchor="middle">PM · HOLD</text></g></svg></div>
+        <div class="body"><div class="ttl"><h3>AI Research Agent</h3><span class="badge">45 MCP TOOLS</span></div><span class="path">Ctrl/Cmd + J</span>
+        <p>Tool-using, screen-aware and debate-capable.</p>
+        <ul><li>Bull vs bear → PM decision</li><li>Strategy Lab with OOS tests</li><li>Memory, threads, approvals</li></ul></div>
+      </a>
+      <a class="card rv" href="#demo" data-tab="macro">
+        <div class="thumb ill" aria-hidden="true"><svg viewBox="0 0 240 110"><line x1="24" y1="92" x2="220" y2="92" stroke="#d6d5cd"/><path d="M28 70 C60 50 90 44 120 40 S190 34 216 32" stroke="#f08a00" stroke-width="2" fill="none"/><path d="M28 58 C60 52 90 50 120 52 S190 58 216 62" stroke="#9aa0ab" fill="none" stroke-width="1.5" stroke-dasharray="4 3"/><circle cx="28" cy="70" r="3" fill="#f08a00"/><circle cx="60" cy="54" r="3" fill="#f08a00"/><circle cx="90" cy="46" r="3" fill="#f08a00"/><circle cx="120" cy="40" r="3" fill="#f08a00"/><circle cx="160" cy="37" r="3" fill="#f08a00"/><circle cx="216" cy="32" r="3" fill="#f08a00"/><g font-family="monospace" font-size="7.5" fill="#6b7280"><text x="26" y="104">3M</text><text x="112" y="104">5Y</text><text x="204" y="104">30Y</text></g></svg></div>
+        <div class="body"><div class="ttl"><h3>Cross-Asset &amp; Macro</h3></div><span class="path">/equity/economics</span>
+        <p>Everything that isn't a single stock.</p>
+        <ul><li>Crypto, FX, commodities</li><li>Bonds, yield curve, ETFs</li><li>Events hub &amp; macro calendar</li></ul></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 ZERO CONFIG BAND ============ -->
+<div class="wrap">
+  <div class="band rv">
+    <div>
+      <div class="kick">✦ ZERO CONFIG <span class="pill" style="background:#ffb347;color:#1a1000">NEW IN 0.8</span></div>
+      <h2>No keys. No signup.<br><em class="s">One command.</em></h2>
+      <p class="lede" style="font-size:16px">The installer detects your OS, writes a single <span class="mono">.env</span>, generates secrets and an admin login, and starts the terminal on <span class="mono">localhost:8000</span>.</p>
+      <ul>
+        <li><span><b>Free data out of the box</b> — Yahoo, NSE, FXMacroData and FRED fallbacks</span></li>
+        <li><span><b>Add keys in the browser</b> — Settings → Data Providers sets, masks and tests them live</span></li>
+        <li><span><b>Or skip the clone</b> — pull the multi-arch image from GHCR</span></li>
+      </ul>
+      <div class="cta-row">
+        <a class="btn accent" href="#deploy">See deploy options →</a>
+        <a class="btn ghost-dark" href="https://github.com/Hitheshkaranth/OpenTerminalUI#quick-start">Read the quick start</a>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-top"><span class="dots"><i></i><i></i><i></i></span><span>bash</span><button class="copy" data-copy="git clone https://github.com/Hitheshkaranth/OpenTerminalUI.git && cd OpenTerminalUI && ./install.sh">copy</button></div>
+<pre><span class="c"># clone and install — Docker if you have it, else Python + Node</span>
+<span class="v">$</span> git clone https://github.com/Hitheshkaranth/OpenTerminalUI.git
+<span class="v">$</span> cd OpenTerminalUI && ./install.sh
+<span class="ok">✓</span> OpenTerminalUI is ready  → http://localhost:8000
+    email:    admin@openterminal.local
+    password: <span class="c">&lt;generated&gt;</span>
+
+<span class="c"># …or just run the image</span>
+<span class="v">$</span> docker run -p 8000:8000 \
+    ghcr.io/hitheshkaranth/openterminalui:latest</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 05 WORKFLOWS ============ -->
+<section id="workflows">
+  <div class="wrap">
+    <div class="label"><b>05</b> In practice</div>
+    <h2 style="margin-bottom:48px">What people <em class="s">actually run</em> on it.</h2>
+    <div class="grid3 rv">
+      <div class="cell"><div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
+        <div class="kick">Pre-market</div><h3>Morning brief</h3><p>Cockpit ranks portfolio risk, alerts, catalysts and movers into one stack before the open.</p><div class="steps">cockpit → events hub → watchlist</div></div>
+      <div class="cell"><div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg></div>
+        <div class="kick">Quant research</div><h3>Idea → verdict</h3><p>Screen, backtest, sweep parameters, then an out-of-sample test that refuses to call a curve fit an edge.</p><div class="steps">screener → backtest → model lab</div></div>
+      <div class="cell"><div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19h16M6 15l3-8 3 5 3-3 3 6"/></svg></div>
+        <div class="kick">Derivatives</div><h3>Options desk</h3><p>Chain with live Greeks, OI build-up and PCR, then build and price a multi-leg strategy.</p><div class="steps">option chain → greeks → strategy</div></div>
+      <div class="cell"><div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+        <div class="kick">Portfolio</div><h3>Import &amp; stress-test</h3><p>Sync Kite or drop a Groww/Zerodha CSV, then run VaR, factor exposure and six macro stress scenarios.</p><div class="steps">import → risk → stress test</div></div>
+      <div class="cell"><div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+        <div class="kick">Automation</div><h3>Alerts that act</h3><p>Compound rules trigger a paper order, a watchlist add or a webhook — with a dry run before you save.</p><div class="steps">alert → action → journal</div></div>
+      <div class="cell"><div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.9 5.8H20l-5 3.6 1.9 5.8-4.9-3.6-4.9 3.6 1.9-5.8-5-3.6h6.1z"/></svg></div>
+        <div class="kick">Agents</div><h3>Claude on your book</h3><p>Point Claude Code or Desktop at the MCP server; it reads your positions and proposes, a human confirms.</p><div class="steps">mcp → propose_* → you approve</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 KEYBOARD (dark) ============ -->
+<section class="dark">
+  <div class="wrap">
+    <div class="label"><b>06</b> Keyboard first</div>
+    <h2 style="margin-bottom:48px">Fast hands, <em class="s">not more clicks.</em></h2>
+    <div class="keys rv">
+      <div class="key"><kbd>Ctrl G</kbd><b>GO bar</b><span>symbol or route</span></div>
+      <div class="key"><kbd>Ctrl K</kbd><b>Command palette</b><span>25+ functions</span></div>
+      <div class="key"><kbd>Ctrl J</kbd><b>AI agent</b><span>screen-aware</span></div>
+      <div class="key"><kbd>F1–F9</kbd><b>Workspaces</b><span>Bloomberg hotkeys</span></div>
+      <div class="key"><kbd>1–7</kbd><b>Timeframes</b><span>in any chart</span></div>
+      <div class="key"><kbd>Esc</kbd><b>Close</b><span>panel or dialog</span></div>
+      <div class="key"><kbd>RELIANCE</kbd><b>Market follows</b><span>re-points to NSE</span></div>
+      <div class="key"><kbd>Right-click</kbd><b>Paper buy/sell</b><span>from any symbol</span></div>
+      <div class="key"><kbd>Pin</kbd><b>Nav rail</b><span>pinned + recent</span></div>
+      <div class="key"><kbd>Save view</kbd><b>Saved views</b><span>filters, tabs, layout</span></div>
+      <div class="key"><kbd>Preset</kbd><b>Workspaces</b><span>Trader · Quant · PM</span></div>
+      <div class="key"><kbd>Theme</kbd><b>Terminal Noir</b><span>classic · light</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 TRUST BENTO ============ -->
+<section id="agent">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="label"><b>07</b> Trust layer</div>
+        <h2>Trust <em class="s">the numbers.</em></h2>
+      </div>
+      <div class="aside-note" style="max-width:360px;text-align:left">// new in 0.8.0<br>The unglamorous work — provenance, provider health and screen-by-screen checks — so the terminal never passes off a guess as a price.</div>
+    </div>
+    <div class="bento">
+      <div class="tile t-a rv">
+        <div class="kick">// provenance · every snapshot</div>
+        <h3>Know where <em class="s">every number</em> came from</h3>
+        <p>Each quote carries source, quality, as-of and latency. Synthetic data is labelled and never used as a price basis.</p>
+        <div class="prov">
+          <div class="prov-row"><span>RELIANCE · last</span><span class="q live">LIVE · KITE</span></div>
+          <div class="prov-row"><span>AAPL · last</span><span class="q delayed">DELAYED · YAHOO</span></div>
+          <div class="prov-row"><span>AAPL · P/E</span><span class="q cached">CACHED · FMP 4m</span></div>
+          <div class="prov-row"><span>NIFTY · order book</span><span class="q synthetic">SYNTHETIC</span></div>
+          <div class="prov-row"><span>INFY · ESG score</span><span class="q na">NO DATA · needs FMP</span></div>
+        </div>
+      </div>
+      <div class="tile t-b rv">
+        <div class="kick">// providers · live status</div>
+        <h3>Provider health, <em class="s">probed for real</em></h3>
+        <p>An expired Kite token reads <b>down</b>, not ok. Admins set, mask, test and clear keys from Settings.</p>
+        <div class="health">
+          <div><span>kite</span><span class="bar"><i style="width:100%"></i></span><span>ok</span></div>
+          <div><span>finnhub</span><span class="bar"><i style="width:100%"></i></span><span>ok</span></div>
+          <div><span>yahoo</span><span class="bar"><i class="warn" style="width:72%"></i></span><span>slow</span></div>
+          <div><span>fmp</span><span class="bar"><i style="width:100%"></i></span><span>ok</span></div>
+          <div><span>nse</span><span class="bar"><i class="bad" style="width:28%"></i></span><span>down</span></div>
+        </div>
+      </div>
+      <div class="tile t-c rv">
+        <div class="kick">// analysis → action</div>
+        <h3>Alerts that <em class="s">do things</em></h3>
+        <p>Up to five actions per rule, dry-run in the builder.</p>
+        <div class="flow"><span>RSI &lt; 30 AND vol &gt; 2×</span><em>→</em><span>paper BUY 10</span><em>→</em><span>webhook</span></div>
+      </div>
+      <div class="tile t-d rv">
+        <div class="kick">// agents · mcp</div>
+        <h3><em class="s">45</em> tools, permission-gated</h3>
+        <p>38 read-only tools; 7 <span class="mono">propose_*</span> writes that a human confirms. Every result comes back as <span class="mono">{ok, data, provenance}</span>.</p>
+      </div>
+      <div class="tile t-e rv">
+        <div class="kick">// verified · 0.8.0</div>
+        <h3>Checked <em class="s">screen by screen</em></h3>
+        <p>Every route captured and checked for failed calls and page errors.</p>
+        <div class="meter"><div class="row"><span>screens clean</span><b>72 / 72</b></div><div class="bar"><i style="width:100%"></i></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 DEPLOY ============ -->
+<section id="deploy" style="padding-top:24px">
+  <div class="wrap">
+    <div class="label"><b>08</b> Deploy · free forever</div>
+    <h2 style="margin-bottom:48px">Run it <em class="s">your way.</em></h2>
+    <div class="plans">
+      <div class="plan pop rv">
+        <div class="nm">Installer</div><div class="sub">recommended · macOS · Linux · WSL · Windows</div>
+        <div class="big">1 cmd</div>
+        <ul><li>Detects Docker or local</li><li>Generates secrets &amp; admin</li><li>Prints your login</li><li>Guided keys: <span class="mono">make keys</span></li></ul>
+        <pre>./install.sh</pre>
+        <a class="btn primary" href="https://github.com/Hitheshkaranth/OpenTerminalUI#one-command-recommended">Install guide →</a>
+      </div>
+      <div class="plan rv">
+        <div class="nm">Docker image</div><div class="sub">GHCR · every release</div>
+        <div class="big">:latest</div>
+        <ul><li>linux/amd64 + arm64</li><li>Tagged X.Y.Z and X.Y</li><li>Health-checked</li><li>No clone needed</li></ul>
+        <pre>docker run -p 8000:8000 \
+  ghcr.io/hitheshkaranth/\
+openterminalui:latest</pre>
+        <a class="btn" href="https://github.com/Hitheshkaranth/OpenTerminalUI/pkgs/container/openterminalui">View package →</a>
+      </div>
+      <div class="plan rv">
+        <div class="nm">Compose</div><div class="sub">backend + Redis + Postgres</div>
+        <div class="big">3 svc</div>
+        <ul><li>Redis cache &amp; pub/sub</li><li>Optional PostgreSQL 16</li><li>Persistent data volume</li><li>LM Studio on the host</li></ul>
+        <pre>docker compose \
+  --profile postgres up</pre>
+        <a class="btn" href="https://github.com/Hitheshkaranth/OpenTerminalUI#manual-alternatives">Compose docs →</a>
+      </div>
+      <div class="plan rv">
+        <div class="nm">Develop</div><div class="sub">hot reload · Python 3.11 · Node 22</div>
+        <div class="big">MIT</div>
+        <ul><li>FastAPI + React 18</li><li>Plugin API &amp; scripting</li><li><span class="mono">make gate</span> runs every check</li><li>PRs welcome</li></ul>
+        <pre>uvicorn backend.main:app --reload
+cd frontend && npm run dev</pre>
+        <a class="btn" href="https://github.com/Hitheshkaranth/OpenTerminalUI/blob/main/CONTRIBUTING.md">Contribute →</a>
+      </div>
+    </div>
+    <div class="plans-note"><span>Minimum: 2 cores · 4 GB RAM · 2 GB disk. All API keys optional.</span><a href="https://github.com/Hitheshkaranth/OpenTerminalUI/releases">All releases →</a></div>
+  </div>
+</section>
+
+<!-- ============ 09 FAQ ============ -->
+<section style="padding-top:24px">
+  <div class="wrap faq">
+    <div class="faq-l">
+      <div class="label"><b>09</b> Questions</div>
+      <h2>Frequently <em class="s">asked.</em></h2>
+      <p>Something missing? Read the <a href="Docs.dc.html">docs</a> or <a href="https://github.com/Hitheshkaranth/OpenTerminalUI/issues">open an issue</a>.</p>
+    </div>
+    <div>
+      <details><summary>Is it really free?</summary><p>Yes. OpenTerminalUI is MIT-licensed and runs on your own hardware. The only costs are any paid data providers you choose to plug in.</p></details>
+      <details><summary>Do I need API keys to start?</summary><p>No. It runs on free sources (Yahoo, NSE, FXMacroData, FRED) out of the box. Keys for Kite, Finnhub, FMP or Alpaca unlock live ticks and deeper fundamentals, and can be added later from Settings → Data Providers.</p></details>
+      <details><summary>Which markets are covered?</summary><p>NSE, BSE, NYSE and NASDAQ equities, NSE and US options, plus crypto, forex, commodities, bonds, ETFs and mutual funds. Opening a symbol re-points the whole terminal to its market.</p></details>
+      <details><summary>How do I know whether a number is live?</summary><p>Every snapshot carries a provenance chip — <code>LIVE</code>, <code>DELAYED</code>, <code>CACHED</code>, <code>SYNTHETIC</code> or <code>NO DATA</code> — with the serving provider and as-of time. The status bar shows per-provider health.</p></details>
+      <details><summary>Can Claude or another agent use it?</summary><p>Yes. The built-in MCP server exposes 45 tools over stdio or HTTP. An API key maps to a user, read keys only reach read tools, and write tools only create proposals that you confirm.</p></details>
+      <details><summary>Does it place real trades?</summary><p>No. Orders go to the built-in paper-trading engine. The agent never executes anything — it proposes, you approve.</p></details>
+      <details><summary>Can I run the AI features locally?</summary><p>Yes. Point it at LM Studio (e.g. a Gemma model) for news sentiment and the agent, or use OpenRouter's free models. Nothing leaves your machine when you run locally.</p></details>
+      <details><summary>What does it need to run?</summary><p>Docker, or Python 3.11 and Node. 2 cores and 4 GB RAM is enough; SQLite by default, PostgreSQL and Redis optional.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 FINAL CTA ============ -->
+<div class="wrap">
+  <div class="final rv">
+    <div class="label"><b>10</b> Start today</div>
+    <h2>Own your terminal.<br><em class="s">Not</em> a subscription.</h2>
+    <p>Free and open source. Running in about two minutes.</p>
+    <div class="cta-row">
+      <a class="btn accent" data-launch href="#deploy">Get started →</a>
+      <a class="btn ghost-dark" href="https://github.com/Hitheshkaranth/OpenTerminalUI">★ Star on GitHub</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <img src="assets/logo-ink.png" alt="OpenTerminalUI" style="height:28px;width:auto">
+        <p>A self-hosted, open-source financial terminal for markets, research, risk and AI-assisted analysis.</p>
+        <div class="tags"><span>MIT</span><span>Self-hosted</span><span>v0.9.0</span></div>
+      </div>
+      <div><h4>Product</h4><ul>
+        <li><a href="#products">Security Hub</a></li><li><a href="#products">Charts</a></li><li><a href="#products">Screener</a></li><li><a href="#products">F&amp;O</a></li><li><a href="#products">Portfolio &amp; Risk</a></li><li><a href="#products">Backtesting</a></li></ul></div>
+      <div><h4>Platform</h4><ul>
+        <li><a href="#agent">AI agent &amp; MCP</a></li><li><a href="#agent">Provenance</a></li><li><a href="#workflows">Alerts &amp; actions</a></li><li><a href="Features.dc.html">All features</a></li></ul></div>
+      <div><h4>Developers</h4><ul>
+        <li><a href="Docs.dc.html">Documentation</a></li><li><a href="#deploy">Deploy</a></li><li><a href="https://github.com/Hitheshkaranth/OpenTerminalUI/pkgs/container/openterminalui">Docker image</a></li><li><a href="https://github.com/Hitheshkaranth/OpenTerminalUI/releases">Changelog</a></li></ul></div>
+      <div><h4>Project</h4><ul>
+        <li><a href="https://github.com/Hitheshkaranth/OpenTerminalUI">GitHub</a></li><li><a href="Roadmap.dc.html">Roadmap</a></li><li><a href="https://github.com/Hitheshkaranth/OpenTerminalUI/blob/main/CONTRIBUTING.md">Contributing</a></li><li><a href="https://github.com/Hitheshkaranth/OpenTerminalUI/issues">Issues</a></li><li><a href="https://github.com/Hitheshkaranth/OpenTerminalUI/blob/main/LICENSE">License</a></li></ul></div>
+    </div>
+    <div class="foot-bot"><span>© 2026 OpenTerminalUI contributors · MIT</span><span>not investment advice · paper trading only</span></div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+
+  // ---------- hero: live Mission Control miniature (simulated ticks) ----------
+  const fmt = (v, d = 2) => v.toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const walk = (q, vol) => { q.prev = q.px; q.px = +(q.px * (1 + (Math.random() - .485) * vol)).toFixed(2); q.hist.push(q.px); if (q.hist.length > 30) q.hist.shift(); return q.px - q.prev; };
+  const mk = (sym, px, open) => ({ sym, px, open, prev: px, hist: Array.from({ length: 30 }, (_, i) => px * (1 + Math.sin(i / 3) * .002)) });
+  const idx = [mk("NIFTY 50", 23414.30, 23366.8), mk("SENSEX", 74858.99, 74721.6), mk("NASDAQ", 27039.78, 26780.1), mk("S&P 500", 7751.18, 7651.9)];
+  const wl = [mk("RELIANCE", 1247.40, 1239.7), mk("TCS", 3412.55, 3441.0), mk("INFY", 1586.20, 1571.4), mk("HDFCBANK", 1702.85, 1709.9), mk("AAPL", 231.42, 228.9), mk("NVDA", 187.66, 183.2)];
+  const tapeQ = [["NIFTY", 23414.3], ["SENSEX", 74858.99], ["USD/INR", 95.81], ["S&P 500", 7751.18], ["NASDAQ", 27039.78], ["DOW", 52006.41], ["FTSE 100", 10739.01], ["DAX", 25575.01], ["GOLD", 4387.8], ["CRUDE", 66.73], ["BTC", 112480]];
+  const chg = q => { const c = (q.px / q.open - 1) * 100; return `<span class="${c >= 0 ? "up" : "dn"}">${c >= 0 ? "+" : ""}${c.toFixed(2)}%</span>`; };
+  const sparkPath = h => { const lo = Math.min(...h), hi = Math.max(...h), r = hi - lo || 1; return h.map((v, i) => `${i ? "L" : "M"}${(i / (h.length - 1) * 100).toFixed(1)} ${(17 - (v - lo) / r * 15).toFixed(1)}`).join(" "); };
+  const tilesEl = $("#tiles"), wlEl = $("#wl");
+  tilesEl.innerHTML = idx.map((q, i) => `<div class="tile"><div class="nm">${q.sym}</div><div class="px" id="tp${i}">${fmt(q.px)}</div><div class="ch" id="tc${i}">${chg(q)}</div><svg viewBox="0 0 100 18" preserveAspectRatio="none"><path id="ts${i}" fill="none" stroke-width="1.4" vector-effect="non-scaling-stroke"/></svg></div>`).join("");
+  wlEl.innerHTML = wl.map((q, i) => `<div id="w${i}"><span class="sy">${q.sym}</span><span class="q" id="wq${i}">${fmt(q.px)}</span><span class="c2" id="wc${i}">${chg(q)}</span></div>`).join("");
+  const tapeHtml = tapeQ.map(([n, v]) => { const c = (Math.random() - .35) * 1.6; return `<span><b>${n}</b>${fmt(v)} <span class="${c >= 0 ? "up" : "dn"}">${c >= 0 ? "+" : ""}${c.toFixed(2)}%</span></span>`; }).join("");
+  $("#tape").innerHTML = tapeHtml + tapeHtml;
+  const paintIdx = i => { const q = idx[i], up = q.px >= q.open, p = $("#ts" + i); p.setAttribute("d", sparkPath(q.hist)); p.setAttribute("stroke", up ? "#22c55e" : "#ef4444"); };
+  idx.forEach((_, i) => paintIdx(i));
+  const flash = (el, d, cls) => { el.classList.remove("fu", "fd"); void el.offsetWidth; el.classList.add(d >= 0 ? "fu" : "fd"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("fu", "fd"), 700); };
+
+  // candlestick chart that builds live
+  const cvs = $("#spark"), g = cvs.getContext("2d");
+  let cw, ch; const candles = []; let last = 1247.4;
+  for (let i = 0; i < 44; i++) { const o = last, c = o * (1 + (Math.random() - .47) * .004); candles.push({ o, c, h: Math.max(o, c) * (1 + Math.random() * .0015), l: Math.min(o, c) * (1 - Math.random() * .0015) }); last = c; }
+  const sizeC = () => { const r = cvs.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2); cw = r.width; ch = r.height; cvs.width = cw * dpr; cvs.height = ch * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  const drawC = () => {
+    g.clearRect(0, 0, cw, ch);
+    const lo = Math.min(...candles.map(k => k.l)), hi = Math.max(...candles.map(k => k.h)), pad = (hi - lo) * .12, y = v => ch - 12 - ((v - lo + pad) / (hi - lo + 2 * pad)) * (ch - 18);
+    g.strokeStyle = "#1c2330"; g.lineWidth = 1;
+    for (let i = 1; i < 4; i++) { g.beginPath(); g.moveTo(0, ch * i / 4); g.lineTo(cw, ch * i / 4); g.stroke(); }
+    const w = cw / candles.length;
+    candles.forEach((k, i) => {
+      const x = i * w + w / 2, up = k.c >= k.o; g.strokeStyle = g.fillStyle = up ? "#22c55e" : "#ef4444";
+      g.beginPath(); g.moveTo(x, y(k.h)); g.lineTo(x, y(k.l)); g.stroke();
+      const t = Math.min(y(k.o), y(k.c)), bh = Math.max(1, Math.abs(y(k.o) - y(k.c))); g.fillRect(x - w * .32, t, w * .64, bh);
+    });
+    const lc = candles[candles.length - 1].c, ly = y(lc);
+    g.setLineDash([3, 3]); g.strokeStyle = "#ffb347"; g.beginPath(); g.moveTo(0, ly); g.lineTo(cw, ly); g.stroke(); g.setLineDash([]);
+    g.fillStyle = "#ffb347"; g.fillRect(cw - 52, ly - 8, 52, 16); g.fillStyle = "#1a1000"; g.font = "600 10px 'Geist Mono', monospace"; g.fillText(fmt(lc), cw - 48, ly + 4);
+  };
+  sizeC(); drawC(); addEventListener("resize", () => { sizeC(); drawC(); });
+
+  const clk = () => {
+    const now = new Date(), f = tz => now.toLocaleTimeString("en-GB", { timeZone: tz, hour12: false });
+    $("#clk").textContent = `IST ${f("Asia/Kolkata")} · ET ${f("America/New_York")}`;
+  };
+  clk();
+  let tick = 0;
+  const step = () => {
+    clk(); tick++;
+    const k = candles[candles.length - 1]; k.c = +(k.c * (1 + (Math.random() - .48) * .0016)).toFixed(2); k.h = Math.max(k.h, k.c); k.l = Math.min(k.l, k.c);
+    if (tick % 5 === 0) { candles.shift(); candles.push({ o: k.c, c: k.c, h: k.c, l: k.c }); }
+    wl[0].prev = wl[0].px; wl[0].px = k.c;
+    drawC();
+    const i = Math.floor(Math.random() * idx.length), d = walk(idx[i], .0009);
+    $("#tp" + i).textContent = fmt(idx[i].px); $("#tc" + i).innerHTML = chg(idx[i]); flash($("#tp" + i), d); paintIdx(i);
+    [0, 1 + Math.floor(Math.random() * (wl.length - 1))].forEach(j => {
+      const dd = j ? walk(wl[j], .0014) : wl[0].px - wl[0].prev;
+      $("#wq" + j).textContent = fmt(wl[j].px); $("#wc" + j).innerHTML = chg(wl[j]); if (dd) flash($("#w" + j), dd);
+    });
+  };
+  if (!reduce) {
+    let on = true;
+    new IntersectionObserver(([e]) => (on = e.isIntersecting)).observe($("#dash"));
+    setInterval(() => on && !document.hidden && step(), 900);
+  }
+
+  // ---------- screen tour ----------
+  const shots = [
+    { id: "home", tab: "Mission Control", kick: "Home · daily desk", img: "home", route: "/home",
+      desc: "Market context, AI outlook, portfolio hub and system health on one screen.", pts: ["Ticker tape with stale values dimmed", "Provider health in the status bar", "Launch grid for every workspace"] },
+    { id: "hub", tab: "Security Hub", kick: "Equity research", img: "security-hub-india", route: "/equity/security/RELIANCE",
+      desc: "The same eight-tab workflow for RELIANCE on NSE or AAPL on NASDAQ.", pts: ["Provenance chip on the quote", "Symbol Context Rail: position, alerts, events", "Paper Buy/Sell in one click"] },
+    { id: "charts", tab: "Charts", kick: "Technical analysis", img: "chart-workstation", route: "/equity/chart-workstation",
+      desc: "A six-pane workstation with synced crosshairs and 70+ indicators.", pts: ["Up to 9 linked panels", "Replay bar by bar", "Export PNG, SVG, CSV"] },
+    { id: "screener", tab: "Screener", kick: "Stock picking", img: "screener", route: "/equity/screener",
+      desc: "Query builder and formula engine with explainable factor ranks.", pts: ["Composite Value / Momentum / Quality", "Why-ranked rationale per row", "One click to chart or backtest"] },
+    { id: "fno", tab: "Options", kick: "Futures & options", img: "fno-option-chain", route: "/fno",
+      desc: "Option chain with live Greeks, OI build-up and PCR signals.", pts: ["Delta, gamma, theta, vega, rho", "Multi-leg strategy builder", "Expiry calendar with rolls"] },
+    { id: "portfolio", tab: "Portfolio", kick: "Holdings & risk", img: "portfolio", route: "/equity/portfolio",
+      desc: "Holdings-first portfolio with Kite sync and CSV import.", pts: ["Zerodha, Groww, generic CSV", "VaR, CVaR and factor exposure", "Benchmark overlay"] },
+    { id: "backtest", tab: "Backtesting", kick: "Quant research", img: "backtesting", route: "/backtesting",
+      desc: "Strategy templates, realistic execution and honest trade pairing.", pts: ["Slippage, commission, market impact", "Walk-forward and Monte Carlo", "Tear-sheets and leaderboards"] },
+    { id: "macro", tab: "Macro", kick: "Cross-asset", img: "economic-terminal", route: "/equity/economics",
+      desc: "Release calendar and macro dashboard from FRED and FXMacroData.", pts: ["Policy rates, CPI, GDP", "Yield curve with 2s10s", "Commodities, FX, crypto desks"] },
+    { id: "settings", tab: "Providers", kick: "New in 0.8 · settings", img: "settings", route: "/settings",
+      desc: "See what each provider unlocks and manage keys without touching .env.", pts: ["Real probes — expired tokens read down", "Set, mask, test and clear keys", "Restart-required list"] },
+  ];
+  const dt = $("#d-tabs"), img = $("#d-img");
+  shots.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.textContent = s.tab; b.setAttribute("role", "tab"); b.dataset.id = s.id;
+    b.onclick = () => { showShot(i); stopTour(); };
+    dt.appendChild(b);
+  });
+  const live = document.createElement("span"); live.className = "live-dot"; live.textContent = "auto-play"; dt.appendChild(live);
+  let si = 0, tour;
+  function showShot(i) {
+    si = i; const s = shots[i];
+    [...dt.querySelectorAll("button")].forEach((b, j) => b.setAttribute("aria-selected", j === i));
+    $("#d-kick").textContent = s.kick; $("#d-title").textContent = s.tab; $("#d-desc").textContent = s.desc;
+    $("#d-list").innerHTML = s.pts.map(p => `<li>${esc(p)}</li>`).join("");
+    $("#d-route").textContent = "route  " + s.route;
+    $("#d-count").textContent = `( ${i + 1} / ${shots.length} ) · screens`;
+    img.classList.add("fade");
+    const src = `assets/shots/${s.img}.webp`;
+    const pre = new Image(); pre.src = src;
+    pre.onload = pre.onerror = () => { img.src = src; img.alt = s.tab + " screenshot"; img.classList.remove("fade"); };
+  }
+  function stopTour() { clearInterval(tour); live.textContent = "paused"; }
+  showShot(0);
+  const demoEl = $("#demo");
+  if (!reduce) {
+    const startTour = () => { clearInterval(tour); tour = setInterval(() => showShot((si + 1) % shots.length), 5000); };
+    new IntersectionObserver(([e]) => e.isIntersecting && live.textContent !== "paused" ? startTour() : clearInterval(tour), { threshold: .3 }).observe(demoEl);
+  }
+  document.querySelectorAll(".card[data-tab]").forEach(c => c.addEventListener("click", () => {
+    const i = shots.findIndex(s => s.id === c.dataset.tab); if (i >= 0) { showShot(i); stopTour(); }
+  }));
+
+  // ---------- shipped ticker ----------
+  const shipped = [
+    ["SEP 29", "OPS", "Multi-arch Docker image on GHCR for every release"],
+    ["SEP 28", "FEAT", "Linked research notes on the Launchpad"],
+    ["SEP 25", "FIX", "Screen-by-screen QA sweep — 72 screens, ~45 data defects"],
+    ["SEP 25", "SEC", "Whole-repo review — sandbox, IDOR and path-traversal fixes"],
+    ["SEP 23", "FEAT", "MCP surface: 16 → 45 tools, HTTP transport, resources, prompts"],
+    ["SEP 22", "FEAT", "Agent memory, threads and approval-gated actions"],
+    ["SEP 21", "FEAT", "Provider keys from Settings · alert actions editor"],
+    ["SEP 21", "FEAT", "Events hub, grouped nav rail, symbol context rail"],
+    ["SEP 21", "FEAT", "Data provenance chips · Kite and CSV portfolio import"],
+  ];
+  const row = shipped.map(([d, t, s]) => `<span class="item"><i>${d}</i><b>${t}</b>${esc(s)}</span>`).join("");
+  $("#ship").innerHTML = row + row;
+
+  // ---------- manifesto log ----------
+  const logEl = $("#log");
+  const L = [
+    ["i", "INFO", "quote   RELIANCE  kite      <span class='g'>live</span>   38ms"],
+    ["i", "INFO", "quote   AAPL      finnhub   <span class='g'>live</span>   52ms"],
+    ["w", "WARN", "nse     403 from upstream → fallback yahoo"],
+    ["i", "INFO", "quote   NIFTY     yahoo     <span class='w'>delayed</span> 15m"],
+    ["i", "INFO", "cache   L1 hit    ohlcv:TCS:1D  0.4ms"],
+    ["p", "SYN ", "orderbook NIFTY   labelled synthetic"],
+    ["i", "INFO", "alert   rsi<30 AND vol>2x  → paper BUY 10 INFY"],
+    ["i", "INFO", "mcp     get_portfolio_risk  user=42  <span class='g'>ok</span>"],
+    ["i", "INFO", "events  AAPL earnings 2026-10-29  impact=high"],
+    ["w", "WARN", "fmp     429 rate-limited → cached 4m"],
+    ["i", "INFO", "backtest SMA 20/50 RELIANCE  17 trips  win 37.5%"],
+    ["i", "INFO", "agent   debate AAPL → HOLD  conviction 0.61"],
+  ];
+  let li = 0;
+  const pushLog = () => {
+    const t = new Date(); const ts = t.toTimeString().slice(0, 8) + "." + String(t.getMilliseconds()).padStart(3, "0");
+    const [cls, lvl, msg] = L[li++ % L.length];
+    const d = document.createElement("div");
+    d.innerHTML = `<span class="t">[${ts}]</span> <span class="${cls}">${lvl}</span> ${msg}`;
+    logEl.appendChild(d); while (logEl.children.length > 16) logEl.firstChild.remove();
+  };
+  for (let i = 0; i < 12; i++) pushLog();
+  if (!reduce) setInterval(pushLog, 1400);
+
+
+  // ---------- hero mesh (anakin-style network lines, orange nodes) ----------
+  const cv = $("#mesh"), cx = cv.getContext("2d");
+  let W, H, pts = [];
+  const size = () => {
+    const r = cv.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    pts = Array.from({ length: Math.round(W * H / 26000) }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .18, vy: (Math.random() - .5) * .18 }));
+  };
+  const draw = () => {
+    cx.clearRect(0, 0, W, H);
+    for (const p of pts) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > W) p.vx *= -1; if (p.y < 0 || p.y > H) p.vy *= -1; }
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 150) { cx.strokeStyle = `rgba(11,14,20,${(1 - d / 150) * .09})`; cx.beginPath(); cx.moveTo(a.x, a.y); cx.lineTo(b.x, b.y); cx.stroke(); }
+    }
+    pts.forEach((p, i) => { cx.fillStyle = i % 7 ? "rgba(11,14,20,.18)" : "rgba(240,138,0,.7)"; cx.beginPath(); cx.arc(p.x, p.y, i % 7 ? 1.3 : 2.2, 0, 7); cx.fill(); });
+    if (!reduce) requestAnimationFrame(draw);
+  };
+  size(); addEventListener("resize", size); draw();
+
+  // ---------- count-up stats ----------
+  if (!reduce) {
+    const sio = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return; sio.unobserve(e.target);
+      const el = e.target, to = +el.dataset.count, suf = el.dataset.suffix || "", t0 = performance.now();
+      const step = t => { const k = Math.min(1, (t - t0) / 1100), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
+        el.textContent = (el.dataset.sep ? v.toLocaleString() : v) + suf; if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }), { threshold: .6 });
+    document.querySelectorAll("[data-count]").forEach(el => sio.observe(el));
+  }
+})();
+</script>
+</body>
+</html>

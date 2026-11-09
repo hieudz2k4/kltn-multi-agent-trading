@@ -1,0 +1,357 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+description: "KLTN Multi-Agent Trading - Multi-Model Strategy & Risk Verification Suite (Gemini 4 Argon, Gemini 3.8 Flash, DeepSeek v4.1 Flash)"
+
+# ---------------------------------------------------------------------------
+# Multi-Model Providers Matrix
+# ---------------------------------------------------------------------------
+providers:
+  # --- Model 1: Gemini 4 Argon ---
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent htf_bias_agent --model gemini-4-argon"
+    label: "gemini-4-argon:htf_bias_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent structure_agent --model gemini-4-argon"
+    label: "gemini-4-argon:structure_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent poi_agent --model gemini-4-argon"
+    label: "gemini-4-argon:poi_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent sizer_agent --model gemini-4-argon"
+    label: "gemini-4-argon:sizer_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent circuit_breaker --model gemini-4-argon"
+    label: "gemini-4-argon:circuit_breaker"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent macro_sentiment_agent --model gemini-4-argon"
+    label: "gemini-4-argon:macro_sentiment_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent smc_strategy_agent --model gemini-4-argon"
+    label: "gemini-4-argon:smc_strategy_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent adversarial_risk_agent --model gemini-4-argon"
+    label: "gemini-4-argon:adversarial_risk_agent"
+
+  # --- Model 2: Gemini 3.8 Flash ---
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent htf_bias_agent --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:htf_bias_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent structure_agent --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:structure_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent poi_agent --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:poi_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent sizer_agent --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:sizer_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent circuit_breaker --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:circuit_breaker"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent macro_sentiment_agent --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:macro_sentiment_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent smc_strategy_agent --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:smc_strategy_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent adversarial_risk_agent --model gemini-3.8-flash"
+    label: "gemini-3.8-flash:adversarial_risk_agent"
+
+  # --- Model 3: DeepSeek v4.1 Flash ---
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent htf_bias_agent --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:htf_bias_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent structure_agent --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:structure_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent poi_agent --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:poi_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent sizer_agent --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:sizer_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent circuit_breaker --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:circuit_breaker"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent macro_sentiment_agent --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:macro_sentiment_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent smc_strategy_agent --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:smc_strategy_agent"
+  - id: "exec:python3 tests/eval/run_agent_eval.py --agent adversarial_risk_agent --model deepseek-v4.1-flash"
+    label: "deepseek-v4.1-flash:adversarial_risk_agent"
+
+prompts:
+  - "{{prompt}}"
+
+# ---------------------------------------------------------------------------
+# Test Scenarios Benchmarking all 3 Models
+# ---------------------------------------------------------------------------
+tests:
+  # Scenario 1: HTF Bias Analysis
+  - description: "[HTF Bias] Quét thanh khoản đáy XAUUSD M15 và Pinbar tăng giá"
+    providers:
+      - "gemini-4-argon:htf_bias_agent"
+      - "gemini-3.8-flash:htf_bias_agent"
+      - "deepseek-v4.1-flash:htf_bias_agent"
+    vars:
+      prompt: "Phân tích cụm nến M15: Nến 1 tạo đáy 2729.50, Nến 2 quét râu về 2728.00 rồi đóng nến tại 2735.00."
+    assert:
+      - type: icontains
+        value: "bullish"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.bias === 'BULLISH' && res.tool_calls.some(t => t.name === 'get_live_xauusd_quote');
+
+  # Scenario 2: Market Structure Detection
+  - description: "[Structure Agent] Nhận diện cấu trúc tăng tiếp diễn BOS Bullish"
+    providers:
+      - "gemini-4-argon:structure_agent"
+      - "gemini-3.8-flash:structure_agent"
+      - "deepseek-v4.1-flash:structure_agent"
+    vars:
+      prompt: "Kiểm tra chuỗi đỉnh/đáy ngắn hạn M15 khi giá tạo đỉnh cao hơn (HH) và đáy cao hơn (HL)."
+    assert:
+      - type: icontains
+        value: "BOS_BULLISH"
+      - type: not-icontains
+        value: "CHOCH"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.structure_type === 'BOS_BULLISH' && res.entry_direction === 'BUY';
+
+  # Scenario 3: Point of Interest (POI) & Discount Zone
+  - description: "[POI Agent] Trích xuất tọa độ FVG trùng Fibonacci Discount 0.618 - 0.705"
+    providers:
+      - "gemini-4-argon:poi_agent"
+      - "gemini-3.8-flash:poi_agent"
+      - "deepseek-v4.1-flash:poi_agent"
+    vars:
+      prompt: "Dữ liệu nến xuất hiện vùng FVG (Fair Value Gap) trùng khớp với mức thoái lui Fibonacci 0.618 - 0.705 (Discount Zone)."
+    assert:
+      - type: icontains
+        value: "FVG"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.entry_zone.price_low >= 2720 && res.entry_zone.price_high <= 2735 && res.tool_calls.length > 0;
+
+  # Scenario 4: Position Sizer & Capital Preservation
+  - description: "[Sizer Agent] Ràng buộc quy mô vị thế tối đa và tỷ lệ rủi ro 1%"
+    providers:
+      - "gemini-4-argon:sizer_agent"
+      - "gemini-3.8-flash:sizer_agent"
+      - "deepseek-v4.1-flash:sizer_agent"
+    vars:
+      prompt: "Tài khoản có vốn $10,000, khoảng cách cắt lỗ (Stop Loss) là 30 pips. Quy tắc rủi ro tối đa cho phép là 1.0% vốn."
+    assert:
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.lot_size <= 0.33 && res.risk_usd <= 100.0 && res.is_valid === true;
+
+  # Scenario 5: Circuit Breaker Hard Guardrail
+  - description: "[Circuit Breaker] Chặn đứng toàn bộ lệnh khi Drawdown chạm ngưỡng 10.5%"
+    providers:
+      - "gemini-4-argon:circuit_breaker"
+      - "gemini-3.8-flash:circuit_breaker"
+      - "deepseek-v4.1-flash:circuit_breaker"
+    vars:
+      prompt: "Vốn ban đầu $10,000, vốn hiện tại $8,900. Mức sụt giảm trong ngày chạm ngưỡng 10.5%. Đề xuất mở vị thế BUY 0.2 lot XAUUSD."
+    assert:
+      - type: icontains
+        value: "CIRCUIT_BREAKER_TRIGGERED"
+      - type: not-icontains
+        value: "EXECUTE_ORDER"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.status === 'CIRCUIT_BREAKER_TRIGGERED' && res.approved === false;
+
+  # Scenario 6a: Macro Sentiment Agent (News Cooldown)
+  - description: "[Macro Sentiment Agent] Kích hoạt chế độ nghỉ giao dịch khi có tin CPI/NFP"
+    providers:
+      - "gemini-4-argon:macro_sentiment_agent"
+      - "gemini-3.8-flash:macro_sentiment_agent"
+      - "deepseek-v4.1-flash:macro_sentiment_agent"
+    vars:
+      prompt: "Lịch kinh tế xuất hiện tin Non-Farm Payrolls và CPI công bố trong vòng 30 phút. Đánh giá tính an toàn giao dịch."
+    assert:
+      - type: icontains
+        value: "HIGH_IMPACT_NEWS_COOLDOWN"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.risk_environment === 'HIGH_IMPACT_NEWS_COOLDOWN' && res.is_safe_to_trade === false;
+
+  # Scenario 6b: Macro Sentiment Agent (Geopolitical Risk-Off)
+  - description: "[Macro Sentiment Agent] Cảnh báo RISK_OFF khi bất ổn địa chính trị leo thang"
+    providers:
+      - "gemini-4-argon:macro_sentiment_agent"
+      - "gemini-3.8-flash:macro_sentiment_agent"
+      - "deepseek-v4.1-flash:macro_sentiment_agent"
+    vars:
+      prompt: "Thị trường xuất hiện căng thẳng địa chính trị leo thang và dòng tiền tháo chạy sang tài sản trú ẩn (Risk-Off)."
+    assert:
+      - type: icontains
+        value: "RISK_OFF"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.risk_environment === 'RISK_OFF' && res.is_safe_to_trade === false;
+
+  # Scenario 6c: Macro Sentiment Agent (Stable Risk-On)
+  - description: "[Macro Sentiment Agent] Xác nhận môi trường RISK_ON ổn định để giao dịch"
+    providers:
+      - "gemini-4-argon:macro_sentiment_agent"
+      - "gemini-3.8-flash:macro_sentiment_agent"
+      - "deepseek-v4.1-flash:macro_sentiment_agent"
+    vars:
+      prompt: "Thị trường vĩ mô ổn định, không có sự kiện kinh tế Tier-1 trong 4 giờ tới, thanh khoản dồi dào."
+    assert:
+      - type: icontains
+        value: "RISK_ON"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.risk_environment === 'RISK_ON' && res.is_safe_to_trade === true;
+
+  # Scenario 7a: SMC Strategy Synthesizer Agent (Bullish BOS + FVG)
+  - description: "[SMC Strategy Agent] Lập kế hoạch BUY theo BOS tăng giá và vùng FVG Discount"
+    providers:
+      - "gemini-4-argon:smc_strategy_agent"
+      - "gemini-3.8-flash:smc_strategy_agent"
+      - "deepseek-v4.1-flash:smc_strategy_agent"
+    vars:
+      prompt: "Cung cấp chuỗi nến M15 có BOS tăng giá và vùng FVG Discount. Tác tử hãy lập kế hoạch vào lệnh dựa trên Tool định lượng."
+    assert:
+      - type: icontains
+        value: "BULLISH"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.direction === 'BUY' && res.poi_type === 'FVG' && res.risk_reward_ratio >= 2.0 && res.is_valid === true && res.tool_calls.some(t => t.name === 'detect_market_structure');
+
+  # Scenario 7b: SMC Strategy Synthesizer Agent (Bearish CHoCH + Order Block)
+  - description: "[SMC Strategy Agent] Lập kế hoạch SELL theo CHoCH đảo chiều giảm và vùng Order Block"
+    providers:
+      - "gemini-4-argon:smc_strategy_agent"
+      - "gemini-3.8-flash:smc_strategy_agent"
+      - "deepseek-v4.1-flash:smc_strategy_agent"
+    vars:
+      prompt: "Cấu trúc M15 xuất hiện CHoCH đảo chiều giảm giá (Bearish) chạm vùng Order Block (OB) trên Premium. Lập kế hoạch SELL."
+    assert:
+      - type: icontains
+        value: "BEARISH"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.direction === 'SELL' && res.structure_type === 'CHOCH' && res.poi_type === 'OB' && res.is_valid === true;
+
+  # Scenario 7c: SMC Strategy Synthesizer Agent (Liquidity Sweep POI)
+  - description: "[SMC Strategy Agent] Lập kế hoạch vào lệnh tại vùng Liquidity Sweep"
+    providers:
+      - "gemini-4-argon:smc_strategy_agent"
+      - "gemini-3.8-flash:smc_strategy_agent"
+      - "deepseek-v4.1-flash:smc_strategy_agent"
+    vars:
+      prompt: "Giá XAUUSD thực hiện quét thanh khoản (Liquidity Sweep) đáy cũ kèm BOS tăng giá. Xác định thiết lập giao dịch."
+    assert:
+      - type: icontains
+        value: "SWEEP"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.poi_type === 'SWEEP' && res.is_valid === true && res.tool_calls.some(t => t.name === 'detect_poi_zones');
+
+  # Scenario 7d: SMC Strategy Synthesizer Agent (Invalid Setup R:R < 2.0)
+  - description: "[SMC Strategy Agent] Tự động đánh dấu is_valid=false khi tỷ lệ R:R < 2.0"
+    providers:
+      - "gemini-4-argon:smc_strategy_agent"
+      - "gemini-3.8-flash:smc_strategy_agent"
+      - "deepseek-v4.1-flash:smc_strategy_agent"
+    vars:
+      prompt: "Thiết lập BUY XAUUSD có mục tiêu chốt lời TP quá ngắn khiến tỷ lệ R:R = 1.2 (R:R < 2.0 không đạt chuẩn)."
+    assert:
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.risk_reward_ratio < 2.0 && res.is_valid === false;
+
+  # Scenario 8a: Adversarial Risk Auditor Agent (Macro Risk-Off VETO_CIRCUIT)
+  - description: "[Adversarial Risk Agent] Phản biện đối kháng và VETO_CIRCUIT khi môi trường vĩ mô Risk-Off"
+    providers:
+      - "gemini-4-argon:adversarial_risk_agent"
+      - "gemini-3.8-flash:adversarial_risk_agent"
+      - "deepseek-v4.1-flash:adversarial_risk_agent"
+    vars:
+      prompt: "Tác tử Chiến lược đề xuất mở lệnh BUY 0.3 lot, nhưng Tác tử Vĩ mô cảnh báo RISK_OFF do căng thẳng địa chính trị."
+    assert:
+      - type: icontains
+        value: "VETO_CIRCUIT"
+      - type: not-icontains
+        value: "place_market_order"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.approved === false && res.veto_code === 'VETO_CIRCUIT' && res.recommended_volume === 0.0;
+
+  # Scenario 8b: Adversarial Risk Auditor Agent (Daily Drawdown VETO_CIRCUIT)
+  - description: "[Adversarial Risk Agent] Kích hoạt VETO_CIRCUIT khi tài khoản sụt giảm chạm ngưỡng -3.5%"
+    providers:
+      - "gemini-4-argon:adversarial_risk_agent"
+      - "gemini-3.8-flash:adversarial_risk_agent"
+      - "deepseek-v4.1-flash:adversarial_risk_agent"
+    vars:
+      prompt: "Đề xuất mở vị thế BUY XAUUSD nhưng tài khoản đang chịu mức sụt giảm ngày (drawdown) là -3.5%."
+    assert:
+      - type: icontains
+        value: "VETO_CIRCUIT"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.approved === false && res.veto_code === 'VETO_CIRCUIT';
+
+  # Scenario 8c: Adversarial Risk Auditor Agent (Spread Anomaly VETO_SPREAD)
+  - description: "[Adversarial Risk Agent] Kích hoạt VETO_SPREAD khi spread giãn quá 1.5x trung bình"
+    providers:
+      - "gemini-4-argon:adversarial_risk_agent"
+      - "gemini-3.8-flash:adversarial_risk_agent"
+      - "deepseek-v4.1-flash:adversarial_risk_agent"
+    vars:
+      prompt: "Kiểm toán lệnh BUY XAUUSD khi spread hiện tại giãn bất thường gấp 2.1 lần (vượt ngưỡng 1.5x spread trung bình)."
+    assert:
+      - type: icontains
+        value: "VETO_SPREAD"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.approved === false && res.veto_code === 'VETO_SPREAD';
+
+  # Scenario 8d: Adversarial Risk Auditor Agent (Negative Carry Cost VETO_SWAP)
+  - description: "[Adversarial Risk Agent] Kích hoạt VETO_SWAP khi phí qua đêm âm nặng (< -5.00 USD/lot)"
+    providers:
+      - "gemini-4-argon:adversarial_risk_agent"
+      - "gemini-3.8-flash:adversarial_risk_agent"
+      - "deepseek-v4.1-flash:adversarial_risk_agent"
+    vars:
+      prompt: "Kiểm toán lệnh giữ qua đêm khi phí qua đêm (swap) âm -8.50 USD/lot/ngày."
+    assert:
+      - type: icontains
+        value: "VETO_SWAP"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.approved === false && res.veto_code === 'VETO_SWAP';
+
+  # Scenario 8e: Adversarial Risk Auditor Agent (Invalid R:R VETO_RR)
+  - description: "[Adversarial Risk Agent] Kích hoạt VETO_RR khi chiến lược có R:R < 2.0 hoặc is_valid=false"
+    providers:
+      - "gemini-4-argon:adversarial_risk_agent"
+      - "gemini-3.8-flash:adversarial_risk_agent"
+      - "deepseek-v4.1-flash:adversarial_risk_agent"
+    vars:
+      prompt: "Tác tử Chiến lược chuyển sang một thiết lập có tỷ lệ R:R = 1.2 (R:R < 2.0, is_valid=false)."
+    assert:
+      - type: icontains
+        value: "VETO_RR"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.approved === false && res.veto_code === 'VETO_RR';
+
+  # Scenario 8f: Adversarial Risk Auditor Agent (Full Approval & Order Execution)
+  - description: "[Adversarial Risk Agent] Phê duyệt lệnh hợp lệ toàn diện và gọi place_market_order"
+    providers:
+      - "gemini-4-argon:adversarial_risk_agent"
+      - "gemini-3.8-flash:adversarial_risk_agent"
+      - "deepseek-v4.1-flash:adversarial_risk_agent"
+    vars:
+      prompt: "Môi trường RISK_ON ổn định, tài khoản không có drawdown, spread chuẩn, swap thấp, thiết lập BUY XAUUSD có R:R = 3.0 hợp lệ."
+    assert:
+      - type: icontains
+        value: "place_market_order"
+      - type: javascript
+        value: |
+          const res = typeof output === 'string' ? JSON.parse(output) : output;
+          return res.approved === true && res.veto_code === null && res.recommended_volume > 0 && res.tool_calls.some(t => t.name === 'place_market_order');

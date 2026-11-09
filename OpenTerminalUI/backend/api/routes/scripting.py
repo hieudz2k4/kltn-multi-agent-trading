@@ -1,0 +1,253 @@
+from __future__ import annotations
+
+import ast
+import asyncio
+import json
+import subprocess
+import sys
+from pathlib import Path
+from datetime import datetime, timezone
+from typing import Any
+from uuid import uuid4
+
+import pandas as pd
+from fastapi import APIRouter, HTTPException
+
+from backend.core.models import PythonExecuteRequest, PythonExecuteResponse
+from backend.models.user_script import (
+    OpenScriptCompileRequest,
+    OpenScriptOutput,
+    OpenScriptRunRequest,
+    OpenScriptRunResponse,
+    UserScript,
+    UserScriptCreateRequest,
+    UserScriptUpdateRequest,
+)
+from backend.services.openscript_compiler import CompileResult, OpenScriptCompiler
+
+router = APIRouter()
+
+_BLOCKED_MODULES = {"os", "sys", "subprocess", "socket", "pathlib", "shutil", "ctypes", "importlib"}
+# Strictly allow-listed builtins - no dangerous functions at all. This is both the
+# execution environment and the set of names user code is allowed to call.
+_SAFE_BUILTINS: dict[str, Any] = {
+    "abs": abs,
+    "all": all,
+    "any": any,
+    "bool": bool,
+    "dict": dict,
+    "enumerate": enumerate,
+    "filter": filter,
+    "float": float,
+    "int": int,
+    "isinstance": isinstance,
+    "len": len,
+    "list": list,
+    "map": map,
+    "max": max,
+    "min": min,
+    "print": print,
+    "range": range,
+    "reversed": reversed,
+    "round": round,
+    "set": set,
+    "sorted": sorted,
+    "str": str,
+    "sum": sum,
+    "tuple": tuple,
+    "zip": zip,
+}
+_COMPILER = OpenScriptCompiler()
+_SCRIPT_STORE: dict[str, UserScript] = {}
+
+
+def _callable_name(func: ast.expr) -> str:
+    """Best-effort name of a call target, for error messages."""
+    if isinstance(func, ast.Name):
+        return func.id
+    if isinstance(func, ast.Attribute):
+        return func.attr
+    return type(func).__name__
+
+
+def _validate_code(code: str) -> None:
+    """AST-level validation of user code before execution.
+
+    Blocks dangerous imports, function calls, attribute access, and dunder
+    traversal that could escape the restricted execution sandbox.
+    """
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as exc:
+        raise HTTPException(status_code=400, detail=f"Syntax error: {exc.msg}") from exc
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    root = alias.name.split(".")[0]
+                    if root in _BLOCKED_MODULES:
+                        raise HTTPException(status_code=400, detail=f"Import blocked: {root}")
+            else:
+                root = (node.module or "").split(".")[0]
+                if root in _BLOCKED_MODULES:
+                    raise HTTPException(status_code=400, detail=f"Import blocked: {root}")
+        # Block every call except the allow-listed builtins, so exec/eval/compile/
+        # os.system and arbitrary method calls can never be reached.
+        if isinstance(node, ast.Call):
+            if not isinstance(node.func, ast.Name) or node.func.id not in _SAFE_BUILTINS:
+                raise HTTPException(status_code=400, detail=f"Call blocked: {_callable_name(node.func)}")
+        # Block dunder access. Restricting __builtins__ and imports is not enough:
+        # `().__class__.__base__.__subclasses__()` traverses to arbitrary loaded
+        # classes (e.g. subprocess.Popen) and escapes the sandbox -> RCE.
+        if isinstance(node, ast.Attribute) and "__" in node.attr:
+            raise HTTPException(status_code=400, detail=f"Attribute access blocked: {node.attr}")
+        if isinstance(node, ast.Name) and "__" in node.id:
+            raise HTTPException(status_code=400, detail=f"Name access blocked: {node.id}")
+
+
+def _run_user_code(code: str, timeout: float) -> PythonExecuteResponse:
+    """Run validated code in a child process that is killed and reaped on timeout."""
+    worker = Path(__file__).resolve().parents[2] / "core" / "python_execution_worker.py"
+    # Packaged launchers dispatch this flag before starting the app or browser.
+    command = [sys.executable, "--ot-python-execution-worker"] if getattr(sys, "frozen", False) else [sys.executable, "-I", str(worker)]
+    try:
+        completed = subprocess.run(
+            command,
+            input=json.dumps({"code": code, "builtins": list(_SAFE_BUILTINS)}),
+            capture_output=True, text=True, timeout=timeout, check=False,
+        )
+    except subprocess.TimeoutExpired:
+        # subprocess.run kills and waits for the child before raising. No executing
+        # user thread or process survives this response.
+        return PythonExecuteResponse(stdout="", stderr="Execution timed out", result=None, timed_out=True)
+    except OSError:
+        return PythonExecuteResponse(stdout="", stderr="Execution worker could not be started", result=None, timed_out=False)
+    if completed.returncode:
+        return PythonExecuteResponse(stdout="", stderr="Execution worker failed", result=None, timed_out=False)
+    try:
+        return PythonExecuteResponse(**json.loads(completed.stdout))
+    except (ValueError, TypeError):
+        return PythonExecuteResponse(stdout="", stderr="Execution worker returned an invalid result", result=None, timed_out=False)
+
+
+def _compile_or_raise(source: str) -> CompileResult:
+    result = _COMPILER.compile(source)
+    if result.success:
+        return result
+    detail = result.errors[0].message if result.errors else "OpenScript compilation failed"
+    if result.errors and result.errors[0].line is not None:
+        detail = f"{detail} (line {result.errors[0].line}, col {result.errors[0].col})"
+    raise HTTPException(status_code=400, detail=detail)
+
+
+def _script_from_source(script_id: str, payload: UserScriptCreateRequest | UserScriptUpdateRequest, *, existing: UserScript | None = None) -> UserScript:
+    source = payload.source if isinstance(payload, UserScriptCreateRequest) else payload.source or (existing.source if existing else "")
+    compile_result = _compile_or_raise(source)
+    created_at = existing.created_at if existing else datetime.now(timezone.utc)
+    updated_at = datetime.now(timezone.utc)
+    return UserScript(
+        id=existing.id if existing else uuid4().hex,
+        name=payload.name if isinstance(payload, UserScriptCreateRequest) else (payload.name if payload.name is not None else existing.name if existing else ""),
+        description=payload.description if isinstance(payload, UserScriptCreateRequest) else (payload.description if payload.description is not None else existing.description if existing else ""),
+        source=source,
+        compiled_ast=compile_result.ast or {},
+        outputs=compile_result.outputs,
+        is_public=payload.is_public if isinstance(payload, UserScriptCreateRequest) else (payload.is_public if payload.is_public is not None else existing.is_public if existing else False),
+        created_at=created_at,
+        updated_at=updated_at,
+    )
+
+
+def _normalize_ohlcv_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
+    if not rows:
+        return pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
+    frame = pd.DataFrame(rows).copy()
+    frame.columns = [str(col).strip().lower() for col in frame.columns]
+    rename_map = {"o": "open", "h": "high", "l": "low", "c": "close", "v": "volume"}
+    frame = frame.rename(columns=rename_map)
+    for col in ["open", "high", "low", "close", "volume"]:
+        if col not in frame.columns:
+            frame[col] = pd.NA
+        frame[col] = pd.to_numeric(frame[col], errors="coerce")
+    return frame[["open", "high", "low", "close", "volume"]].copy()
+
+
+@router.post("/v1/scripting/python/execute", response_model=PythonExecuteResponse)
+async def execute_python(payload: PythonExecuteRequest) -> PythonExecuteResponse:
+    _validate_code(payload.code)
+    timeout = max(0.1, min(float(payload.timeout_seconds), 10.0))
+    return await asyncio.to_thread(_run_user_code, payload.code, timeout)
+
+
+@router.post("/scripting/compile", response_model=CompileResult)
+async def compile_openscript(payload: OpenScriptCompileRequest) -> CompileResult:
+    return _COMPILER.compile(payload.source)
+
+
+@router.post("/scripting/scripts", response_model=UserScript)
+async def create_script(payload: UserScriptCreateRequest) -> UserScript:
+    script = _script_from_source("", payload)
+    _SCRIPT_STORE[script.id] = script
+    return script
+
+
+@router.get("/scripting/scripts", response_model=list[UserScript])
+async def list_scripts() -> list[UserScript]:
+    return sorted(_SCRIPT_STORE.values(), key=lambda item: item.updated_at, reverse=True)
+
+
+@router.get("/scripting/scripts/{script_id}", response_model=UserScript)
+async def get_script(script_id: str) -> UserScript:
+    script = _SCRIPT_STORE.get(script_id)
+    if script is None:
+        raise HTTPException(status_code=404, detail="Script not found")
+    return script
+
+
+@router.put("/scripting/scripts/{script_id}", response_model=UserScript)
+async def update_script(script_id: str, payload: UserScriptUpdateRequest) -> UserScript:
+    existing = _SCRIPT_STORE.get(script_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Script not found")
+    updated_payload = UserScriptCreateRequest(
+        name=payload.name if payload.name is not None else existing.name,
+        description=payload.description if payload.description is not None else existing.description,
+        source=payload.source if payload.source is not None else existing.source,
+        is_public=payload.is_public if payload.is_public is not None else existing.is_public,
+    )
+    script = _script_from_source(script_id, updated_payload, existing=existing)
+    _SCRIPT_STORE[script_id] = script
+    return script
+
+
+@router.delete("/scripting/scripts/{script_id}")
+async def delete_script(script_id: str) -> dict[str, Any]:
+    existing = _SCRIPT_STORE.pop(script_id, None)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Script not found")
+    return {"deleted": True, "id": script_id}
+
+
+@router.post("/scripting/scripts/{script_id}/run", response_model=OpenScriptRunResponse)
+async def run_script(script_id: str, payload: OpenScriptRunRequest) -> OpenScriptRunResponse:
+    script = _SCRIPT_STORE.get(script_id)
+    if script is None:
+        raise HTTPException(status_code=404, detail="Script not found")
+    if not script.compiled_ast:
+        script = _script_from_source(script_id, UserScriptCreateRequest(name=script.name, description=script.description, source=script.source, is_public=script.is_public), existing=script)
+        _SCRIPT_STORE[script_id] = script
+    frame = _normalize_ohlcv_frame(payload.ohlcv)
+    eval_result = _COMPILER.evaluate(script.compiled_ast, frame)
+    outputs = [
+        OpenScriptOutput(
+            kind=item.kind,
+            title=item.title,
+            color=item.color,
+            linewidth=item.linewidth,
+            message=item.message,
+            series=item.series,
+            metadata=item.metadata,
+        )
+        for item in eval_result.outputs
+    ]
+    return OpenScriptRunResponse(script_id=script.id, script_name=script.name, outputs=outputs, row_count=len(frame))

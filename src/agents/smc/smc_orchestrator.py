@@ -1,11 +1,9 @@
-"""SMC Sub-Orchestrator — Branch 2 (Opportunistic SMC).
+"""SMC Multi-Agent Orchestrator — Branch 2 (Opportunistic SMC).
 
-Chains the 5 sequential SMC trading stages:
-1. HTF Bias Analyzer -> state['htf_bias']
-2. Market Structure Agent -> state['market_structure']
-3. POI & Liquidity Detector -> state['poi_zone']
-4. Position Sizer Agent -> state['smc_setup']
-5. Risk Gatekeeper Agent -> state['risk_verdict'] -> MT5 execution if approved
+Coordinates the Hybrid Multi-Agent trading workflow:
+1. Macro News & Sentiment Agent -> checks macro regime & tier-1 news cooldown
+2. SMC Strategy Synthesizer Agent -> invokes deterministic SMC tools (BOS, FVG, OB, Sizer) to produce SMCSetup
+3. Adversarial Risk Auditor Agent -> adversarial red-team audit; VETO or execute order on MT5
 
 Follows Google ADK hierarchical sub_agents pattern.
 """
@@ -14,46 +12,41 @@ import os
 
 from google.adk.agents.llm_agent import Agent
 
-from src.agents.shared.risk_gatekeeper import create_risk_gatekeeper
-from src.agents.smc.htf_bias_agent import create_htf_bias_agent
-from src.agents.smc.poi_agent import create_poi_agent
-from src.agents.smc.sizer_agent import create_sizer_agent
-from src.agents.smc.structure_agent import create_structure_agent
+from src.agents.smc.adversarial_risk_agent import create_adversarial_risk_agent
+from src.agents.smc.macro_sentiment_agent import create_macro_sentiment_agent
+from src.agents.smc.smc_strategy_agent import create_smc_strategy_agent
 
 SMC_ORCHESTRATOR_INSTRUCTION = """
-You are the SMC Pipeline Orchestrator coordinating the complete Smart Money Concepts trading workflow for the requested symbol.
+You are the SMC Multi-Agent Executive Orchestrator coordinating the quantitative trading workflow.
 
-Mandatory 5-Step Sequential Pipeline:
-Step 1: Delegate to `htf_bias_agent` to determine macro H4/D1 bias (BULLISH/BEARISH/RANGING).
-Step 2: Delegate to `structure_agent` to inspect M15 micro structure and identify BOS or CHoCH.
-Step 3: Delegate to `poi_agent` to locate high-probability Order Blocks (OB), FVGs, and Liquidity Sweeps.
-Step 4: Delegate to `sizer_agent` to calculate Entry, Stop Loss, Take Profit, R:R ratio, and 1R position sizing.
-Step 5: Delegate to `risk_gatekeeper` to independently audit all VETO risk gates and execute orders on MT5 if approved.
+Workflow Execution Order:
+Stage 1: Delegate to `macro_sentiment_agent` to assess global risk climate and tier-1 economic news events.
+Stage 2: Delegate to `smc_strategy_agent` to invoke deterministic SMC tools and formulate a mathematically sound SMCSetup.
+Stage 3: Delegate to `adversarial_risk_agent` to audit all risk gates, challenge the setup, and either VETO or dispatch the order to MT5.
 
-Summarize the final status and decisions of the complete pipeline once all 5 stages conclude.
+Once all sub-agents finish their turns, synthesize a comprehensive executive summary detailing:
+- The macro risk regime and news impact
+- The technical SMC setup rationale (BOS/CHoCH, POI, Entry, SL, TP, R:R)
+- The final Risk Verdict (Approved or Vetoed with reason)
 """
 
 
 def create_smc_orchestrator(model_name: str | None = None) -> Agent:
-    """Create the Root Sub-Orchestrator for the SMC strategy branch."""
-    model = model_name or os.getenv("SMC_LLM_MODEL", "gemini-2.5-flash")
+    """Create the Root Executive Orchestrator for the SMC Multi-Agent strategy branch."""
+    model = model_name or os.getenv("SMC_LLM_MODEL", "gemini-4-argon")
 
-    htf_agent = create_htf_bias_agent(model_name=model)
-    struct_agent = create_structure_agent(model_name=model)
-    poi_agent = create_poi_agent(model_name=model)
-    sizer_agent = create_sizer_agent(model_name=model)
-    gatekeeper = create_risk_gatekeeper(model_name=model)
+    macro_agent = create_macro_sentiment_agent(model_name=model)
+    strategy_agent = create_smc_strategy_agent(model_name=model)
+    risk_agent = create_adversarial_risk_agent(model_name=model)
 
     return Agent(
         name="smc_orchestrator",
         model=model,
-        description="Coordinates the 5-step automated Smart Money Concepts trading pipeline.",
+        description="Coordinates the 3-stage Hybrid Multi-Agent SMC quantitative trading pipeline.",
         instruction=SMC_ORCHESTRATOR_INSTRUCTION,
         sub_agents=[
-            htf_agent,
-            struct_agent,
-            poi_agent,
-            sizer_agent,
-            gatekeeper,
+            macro_agent,
+            strategy_agent,
+            risk_agent,
         ],
     )

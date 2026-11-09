@@ -622,52 +622,27 @@ fi
         done
 
         if sudo docker info >/dev/null 2>&1; then
-            if ! sudo docker image inspect gmag11/metatrader5_vnc:latest >/dev/null 2>&1; then
-                log "Image MT5 chua co, dang pull..."
-                sudo docker pull gmag11/metatrader5_vnc:latest >> /tmp/mt5docker.log 2>&1 || true
+            MT5_IMAGE="hieudz2004/mt5-trading:latest"
+            if ! sudo docker image inspect "$MT5_IMAGE" >/dev/null 2>&1; then
+                log "Image MT5 chua co, dang pull: $MT5_IMAGE..."
+                sudo docker pull "$MT5_IMAGE" >> /tmp/mt5docker.log 2>&1 || true
             fi
-            if sudo docker image inspect gmag11/metatrader5_vnc:latest >/dev/null 2>&1; then
+            if sudo docker image inspect "$MT5_IMAGE" >/dev/null 2>&1; then
                 log "Bat MetaTrader 5 Docker container..."
-                # Fix phan quyen cho container user abc (UID 911) tranh loi 'not owned by you' cua Wine
                 sudo mkdir -p "$PERSIST/mt5_data"
-                sudo chown -R 911:911 "$PERSIST/mt5_data" 2>/dev/null || true
                 sudo chmod -R 777 "$PERSIST/mt5_data" 2>/dev/null || true
                 sudo docker rm -f mt5-container 2>/dev/null || true
                 sudo docker run -d \
                     --name mt5-container \
                     --restart unless-stopped \
                     -p 3000:3000 \
-                    -p 3001:3001 \
                     -p 8001:8001 \
-                    -p 5900:5900 \
                     -e WINEPREFIX=/config/.wine \
-                    -v "$TS_BASE/.persist/mt5_data:/config" \
-                    gmag11/metatrader5_vnc:latest >> /tmp/mt5docker.log 2>&1
-                log "Cho Wine + Python 3.9 san sang trong container (max 5 phut)..."
-                PYCHECK=0
-                while [ $PYCHECK -lt 60 ]; do
-                    if sudo docker exec -u abc -e WINEPREFIX=/config/.wine mt5-container \
-                        wine 'C:/Program Files (x86)/Python39-32/python.exe' --version \
-                        >> /tmp/mt5docker.log 2>&1; then
-                        log "  -> Python 3.9 san sang! Cai rpyc==5.2.3 + mt5linux==1.0.3..."
-                        sudo docker exec -u abc -e WINEPREFIX=/config/.wine mt5-container \
-                            wine 'C:/Program Files (x86)/Python39-32/python.exe' \
-                            -m pip install 'numpy<2.0.0' 'rpyc==5.2.3' 'mt5linux==1.0.3' \
-                            >> /tmp/mt5docker.log 2>&1 || true
-                        log "  -> Khoi dong MT5 RPyC server tai port 8001..."
-                        sudo docker exec -d -u abc -e DISPLAY=:1 -e WINEPREFIX=/config/.wine mt5-container \
-                            wine 'C:/Program Files (x86)/Python39-32/python.exe' \
-                            -c "import rpyc; from rpyc.utils.server import ThreadedServer; ThreadedServer(rpyc.SlaveService, port=8001, hostname='0.0.0.0').start()" || true
-                        log "MetaTrader 5 Docker da khoi dong (port 8001 rpyc | 5900 VNC)"
-                        break
-                    fi
-                    PYCHECK=$((PYCHECK + 1))
-                    [ $((PYCHECK % 12)) -eq 0 ] && log "  -> Dang cho Wine/Python... (${PYCHECK}x5s kinh qua)"
-                    sleep 5
-                done
-                [ $PYCHECK -ge 60 ] && log "[CANH BAO] Python chua san sang sau 5 phut - container se tu xu ly"
+                    -v "$PERSIST/mt5_data:/config" \
+                    "$MT5_IMAGE" >> /tmp/mt5docker.log 2>&1
+                log "MetaTrader 5 Docker da khoi dong san sang (Web VNC: 3000 | RPyC API: 8001)"
             else
-                log "[CANH BAO] Khong pull duoc image MT5, kiem tra ket noi mang"
+                log "[CANH BAO] Khong pull duoc image MT5 tu Docker Hub, kiem tra ket noi mang"
             fi
         else
             log "[CANH BAO] Docker daemon khong phan hoi sau 60s, bo qua MT5"

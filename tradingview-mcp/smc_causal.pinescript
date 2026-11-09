@@ -1,0 +1,91 @@
+//@version=5
+indicator("KLTN - Smart Money Concepts (Causal SMC)", overlay=true, max_boxes_count=100, max_lines_count=100, max_labels_count=100)
+
+// ==============================================================================
+// 1. CẤU HÌNH THAM SỐ (ĐỒNG BỘ CHUẨN 1:1 VỚI PYTHON src/tools/smc_tools.py)
+// ==============================================================================
+lookback     = input.int(5, "Swing Lookback (Left Bars)", minval=2, tooltip="Số nến bên trái để xác nhận đỉnh/đáy")
+confirm_bars = input.int(2, "Confirmation Bars (Right Bars)", minval=1, tooltip="Số nến xác nhận bên phải (Thời gian thực, không lookahead)")
+show_ob      = input.bool(true, "Hiển thị Order Blocks (OB)")
+show_fvg     = input.bool(true, "Hiển thị Fair Value Gaps (FVG)")
+show_bos     = input.bool(true, "Hiển thị BOS / CHoCH")
+show_swings  = input.bool(true, "Hiển thị Swing High / Swing Low Points")
+
+// Bảng màu chuẩn giao diện Dark Mode TradingView
+c_bull_ob   = color.new(#089981, 80) // Xanh lục mờ cho Bullish OB
+c_bear_ob   = color.new(#f23645, 80) // Đỏ mờ cho Bearish OB
+c_bull_fvg  = color.new(#26a69a, 85) // Xanh ngọc mờ cho Bullish FVG
+c_bear_fvg  = color.new(#ff9800, 85) // Cam mờ cho Bearish FVG
+c_bos_line  = color.new(#2962ff, 30) // Xanh dương cho BOS
+c_choch_line= color.new(#ab47bc, 30) // Tím cho CHoCH
+
+// ==============================================================================
+// 2. THUẬT TOÁN ĐỈNH / ĐÁY THỜI GIAN THỰC (CAUSAL - ZERO LOOK-AHEAD BIAS)
+// ==============================================================================
+// Phép tính xác nhận đỉnh/đáy dựa trên ta.pivothigh / ta.pivotlow tại nến hiện tại
+ph = ta.pivothigh(high, lookback, confirm_bars)
+pl = ta.pivotlow(low, lookback, confirm_bars)
+
+var float last_sh = na
+var float last_sl = na
+var int   last_sh_bar = na
+var int   last_sl_bar = na
+var int   market_trend = 0 // 1: Bullish, -1: Bearish
+
+if not na(ph)
+    last_sh := ph
+    last_sh_bar := bar_index - confirm_bars
+    if show_swings
+        label.new(last_sh_bar, ph, "SH", color=color.new(color.red, 70), textcolor=color.white, style=label.style_label_down, size=size.tiny)
+
+if not na(pl)
+    last_sl := pl
+    last_sl_bar := bar_index - confirm_bars
+    if show_swings
+        label.new(last_sl_bar, pl, "SL", color=color.new(color.green, 70), textcolor=color.white, style=label.style_label_up, size=size.tiny)
+
+// ==============================================================================
+// 3. NHẬN DIỆN VÀ VẼ BOS (BREAK OF STRUCTURE) & CHOCH (CHANGE OF CHARACTER)
+// ==============================================================================
+// Phá vỡ đỉnh gần nhất
+if show_bos and not na(last_sh) and ta.crossover(close, last_sh)
+    is_choch = (market_trend == -1)
+    lbl_text = is_choch ? "CHoCH" : "BOS"
+    line_col = is_choch ? c_choch_line : c_bos_line
+    line.new(last_sh_bar, last_sh, bar_index, last_sh, color=line_col, width=2, style=line.style_dashed)
+    label.new(math.round((last_sh_bar + bar_index) / 2), last_sh, lbl_text, color=line_col, textcolor=color.white, style=label.style_label_down, size=size.small)
+    market_trend := 1
+    last_sh := na // Reset sau khi mức cản đã bị phá vỡ
+
+// Phá vỡ đáy gần nhất
+if show_bos and not na(last_sl) and ta.crossunder(close, last_sl)
+    is_choch = (market_trend == 1)
+    lbl_text = is_choch ? "CHoCH" : "BOS"
+    line_col = is_choch ? c_choch_line : c_bos_line
+    line.new(last_sl_bar, last_sl, bar_index, last_sl, color=line_col, width=2, style=line.style_dashed)
+    label.new(math.round((last_sl_bar + bar_index) / 2), last_sl, lbl_text, color=line_col, textcolor=color.white, style=label.style_label_up, size=size.small)
+    market_trend := -1
+    last_sl := na
+
+// ==============================================================================
+// 4. NHẬN DIỆN VÀ VẼ FAIR VALUE GAP (FVG)
+// ==============================================================================
+if show_fvg
+    // Bullish FVG (Nến i có Low > High của nến i-2)
+    if low > high[2]
+        box.new(bar_index - 2, low, bar_index + 12, high[2], border_color=color.teal, bgcolor=c_bull_fvg)
+    // Bearish FVG (Nến i có High < Low của nến i-2)
+    if high < low[2]
+        box.new(bar_index - 2, low[2], bar_index + 12, high, border_color=color.orange, bgcolor=c_bear_fvg)
+
+// ==============================================================================
+// 5. NHẬN DIỆN VÀ VẼ ORDER BLOCKS (OB)
+// ==============================================================================
+if show_ob and not na(ph)
+    // Bearish OB: Khối nến đối kháng trước cú sụt giảm xác nhận Swing High
+    box.new(last_sh_bar - 1, high[confirm_bars], bar_index + 15, low[confirm_bars], border_color=color.red, bgcolor=c_bear_ob)
+
+if show_ob and not na(pl)
+    // Bullish OB: Khối nến đối kháng trước cú bật tăng xác nhận Swing Low
+    box.new(last_sl_bar - 1, high[confirm_bars], bar_index + 15, low[confirm_bars], border_color=color.green, bgcolor=c_bull_ob)
+
